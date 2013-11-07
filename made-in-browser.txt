@@ -1,3 +1,3 @@
-line A
+line A changed in the 3rd edit
 line B was extended in the 2nd edit
 last line
