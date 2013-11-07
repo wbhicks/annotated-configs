@@ -1,0 +1,3 @@
+line A
+line B
+last line
