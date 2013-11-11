@@ -1,0 +1,115 @@
+; when emacs lacks its own X window, <backspace> triggers Help.
+; (n.b.: F1 invokes Help anyway, so you don't need to remember
+; the bit about C-x ? below. )
+; this makes the <backspace> key work properly:
+ 
+(setq key-translation-map (or key-translation-map (make-keymap)))
+(define-key key-translation-map "\C-x?" "\C-h")
+(define-key key-translation-map "\C-h" (kbd "DEL"))
+ 
+;
+;This tells C-h to behave like DEL does normally, and it tells C-x ? to
+;behave like C-h does normally.  That is, instead of C-h k to find out
+;the meaning of a key, you now type C-x ? k.  And C-h works as you
+;want, even in isearch.
+;
+;However, beware: I haven't really tested this, just tried it for maybe
+;30 seconds.  I will add this to my own init file, though, so when the
+;need arises to use Emacs in non-X mode, I will see what happens.
+;
+;But please note the following: if you're using Emacs under X, all of
+;this is not necessary: Backspace already deletes to the left and C-h
+;gives you help.
+;
+;-- Kai Grossjohann, Informatik VI        grossjohann@ls6.cs.uni-dortmund.de
+ 
+;
+; why ctrl-RIGHT doesn't work under -nw option (for now):
+;
+;> 2) control-up arrow (down arrow) do not recall
+;> previous commands
+;> 3) control left/right arrows do not go to the
+;> next/previous words
+;
+;This is not so easy to do, since the terminal probably doesn't know
+;about these keys.  That is, when you hit C-<left>, the terminal sends
+;<left> to the application.  Since the application never learns that
+;the ctrl key was pressed, it cannot react.
+;
+;But if your terminal is programmable, you can do that.  The first
+;thing to do is to find out the escape sequence for <left> and program
+;the terminal to emit a *different* escape sequence for C-<left>.
+ 
+; these work but they screw up the page-up and page-down keys:
+;
+;(global-set-key "\M-]" 'forward-word)
+;(global-set-key "\M-[" 'backward-word)
+
+; in desperation I made the left and right arrow keys _always_
+; jump words:
+; 
+(global-set-key [right] 'forward-word)
+(global-set-key [left] 'backward-word)
+
+; now let's see if C-left and C-right (or M-...) are visible -- if so,
+; they can move by character and we won't need to use
+; C-b and C-f... (much trial-and-error) ... nope, they're
+; not visible.
+
+; Nov 17 2001 - gotta get my char-by-char jump back...
+(global-set-key "{" "[")
+(global-set-key "}" "]")
+(global-set-key "]" 'forward-char)
+(global-set-key "[" 'backward-char)
+
+; Normally, both C-_ and C-/ mean "undo".
+; I'm not making any changes here, but I'm writing this note because I'm
+; about to make C-_ the escape (command) sequence for SCREEN -- i.e. the
+; GNU app called _screen_. Since I'm using emacs under screen, I expect
+; that emacs can no longer count on getting the C-_ signal; therefore,
+; plan on working with C-/ when necessary.
+; wbhicks July 1 2001
+;
+; PROBLEM: C-/ _also_ gets trapped by SCREEN. Hmmm...
+;
+; OK, now I've gotten screen to use C-\
+
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(global-font-lock-mode t nil (font-lock)))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(custom-documentation-face ((t (:inverse-video nil)))))
+
+;
+; see http://www.emacswiki.org/cgi-bin/wiki.pl?HtmlHelperMode
+;
+(autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
+(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode)       auto-mode-alist))
+
+(load "~/post-mode/post")
+
+(setq default-major-mode 'text-mode)
+;
+; Turn on Auto Fill mode automatically in Text mode and related modes.
+;
+(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
+
+(setq abbrev-file-name "~/.emacs_abbrevs")
+(quietly-read-abbrev-file)
+(add-hook 'text-mode-hook '(lambda () (abbrev-mode 1)))
+
+(setq inferior-lisp-program "clisp")
+(setq truncate-partial-width-windows nil)
+
+; Happy New Year, 2002!
+
+
+
+
+
+
+
