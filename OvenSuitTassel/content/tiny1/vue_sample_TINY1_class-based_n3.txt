@@ -1,0 +1,48 @@
+#  This fi
+
+# This is a Tur
+# Above each tri
+# (2) the vueid of the vu
+# a node asse
+# for the asse
+
+@prefi
+
+# -2 (none)
+# this is the TasselObj that holds the Tassel builtIn Class
+
+# -1 (none)
+# this is the TasselObj that holds the Tassel builtIn a
+
+# 2 N
+#@DECL :this__is__the__label__of__node__A
+       :this__is__the__label__of__node__A  :hasAsCaptured  "this_is_the_label_of_node_A"  .
+
+# 3 N
+#@DECL :chevy
+       :chevy  :hasAsCaptured  "Car chevy"  .
+
+# 9 N
+#@DECL :foo
+       :foo  :hasAsCaptured  "Class foo"  .
+
+# 10 N
+#@DECL :cessna
+       :cessna  :hasAsCaptured  "Plane cessna"  .
+
+# 10003 (derived from 3)
+#@DECL :Car
+       :Car  :hasAsCaptured  "Car chevy"  .
+
+# 10009 (derived from 9)
+       :foo  :a  :Class  .
+
+# 10010 (derived from 10)
+#@DECL :Plane
+       :Plane  :hasAsCaptured  "Plane cessna"  .
+
+# 50001 (derived from 3)
+       :chevy  :a  :Car  .
+
+# 50002 (derived from 10)
+       :cessna  :a  :Plane  .

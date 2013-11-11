@@ -1,0 +1,37 @@
+(default,PureWhitespace) -> 106
+(default,vuechild_node) -> 4
+(knownCruftAttributeKeys,autoSized) -> 8
+(knownCruftAttributeKeys,created) -> 8
+(knownCruftAttributeKeys,height) -> 8
+(knownCruftAttributeKeys,layerID) -> 8
+(knownCruftAttributeKeys,strokeWidth) -> 8
+(knownCruftAttributeKeys,width) -> 8
+(knownCruftAttributeKeys,x) -> 8
+(knownCruftAttributeKeys,y) -> 8
+(knownCruftElementKeys,PathwayList) -> 1
+(knownCruftElementKeys,URIString) -> 5
+(knownCruftElementKeys,date) -> 1
+(knownCruftElementKeys,fillColor) -> 5
+(knownCruftElementKeys,font) -> 5
+(knownCruftElementKeys,layer) -> 1
+(knownCruftElementKeys,mapFilterModel) -> 1
+(knownCruftElementKeys,metadata-list) -> 5
+(knownCruftElementKeys,modelVersion) -> 1
+(knownCruftElementKeys,presentationBackground) -> 1
+(knownCruftElementKeys,resource) -> 1
+(knownCruftElementKeys,saveFile) -> 1
+(knownCruftElementKeys,saveLocation) -> 1
+(knownCruftElementKeys,strokeColor) -> 5
+(knownCruftElementKeys,textColor) -> 5
+(knownCruftElementKeys,userOrigin) -> 1
+(knownCruftElementKeys,userZoom) -> 1
+(knownNonCruftAttributeKeys,ID) -> 8
+(knownNonCruftAttributeKeys,label) -> 8
+(knownNonCruftAttributeKeys,type) -> 8
+(knownNonCruftElementKeys,LW-MAP) -> 1
+(knownNonCruftElementKeys,child) -> 4
+(unknownElementKeys,shape) -> 4
+(vueLabels,vuechild_node::10::Plane cessna) -> 1
+(vueLabels,vuechild_node::2::this_is_the_label_of_node_A) -> 1
+(vueLabels,vuechild_node::3::Car chevy) -> 1
+(vueLabels,vuechild_node::9::Class foo) -> 1

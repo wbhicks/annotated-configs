@@ -1,0 +1,34 @@
+#  This file written BEFORE link endpoints were resolved.
+
+# This is a Turtle document, EXCEPT that @decl is a non-Turtle kludge. 
+# Above each triple, its 1st debug line consists of (1) its ID from the triple store, 
+# (2) the vueid of the vuechild from which it was derived (usually the same as (1), but 
+# a node asserting 'Foo bar' will have its vueid used for the declaration of bar, NOT 
+# for the assertion that bar is of class Foo), and (3) the type of that vuechild.
+
+@prefix : <http://no.such.domain/example/>  .
+
+# 2 N
+#@DECL  :this__is__the__label__of__node__A_2
+       :this__is__the__label__of__node__A_2  :hasAsCaptured  "this_is_the_label_of_node_A"  .
+
+# 3 N
+#@DECL  :qk317__chevy_3
+       :qk317__chevy_3  :hasAsCaptured  "qk317_chevy"  .
+
+# 9 N
+#@DECL  :qk307__foo_9
+       :qk307__foo_9  :hasAsCaptured  "qk307_foo"  .
+
+# 10 N
+#@DECL  :qk317__cessna_10
+       :qk317__cessna_10  :hasAsCaptured  "qk317_cessna"  .
+
+# 50001 (derived from 3 N)
+  :qk317__chevy_3  :a  :Car  .
+
+# 50002 (derived from 9 N)
+  :qk307__foo_9  :a  :Class  .
+
+# 50003 (derived from 10 N)
+  :qk317__cessna_10  :a  :Plane  .

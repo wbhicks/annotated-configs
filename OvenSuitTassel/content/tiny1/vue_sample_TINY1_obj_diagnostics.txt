@@ -1,0 +1,40 @@
+#  This fi
+
+# This is a Tur
+# Above each tri
+# (2) the vueid of the vu
+# a node asse
+# for the asse
+
+@prefi
+
+# 2 N
+#@DECL  :this_is_the_label_of_node_A   #   VN:2:this_is_the_label_of_node_A:<VS:2:this_is_the_label_of_node_A:roundRect>
+       :this__is__the__label__of__node__A  :hasAsCaptured  "this_is_the_label_of_node_A"  .
+# 3 N
+#@DECL  :Car chevy   #   VN:3:Car chevy:<VS:3:Car chevy:roundRect>
+       :Car_chevy  :hasAsCaptured  "Car chevy"  .
+# 9 N
+#@DECL  :Class foo   #   VN:9:Class foo:<VS:9:Class foo:roundRect>
+       :Class_foo  :hasAsCaptured  "Class foo"  .
+# 10 N
+#@DECL  :Plane cessna   #   VN:10:Plane cessna:<VS:10:Plane cessna:roundRect>
+       :Plane_cessna  :hasAsCaptured  "Plane cessna"  .
+# 22002 ?
+   #   <VS:2:this_is_the_label_of_node_A:roundRect>
+       :this__is__the__label__of__node__A  :hasAsCaptured  "this_is_the_label_of_node_A"  .
+# 22003 ?
+   #   <VS:3:Car chevy:roundRect>
+       :Car_chevy  :hasAsCaptured  "Car chevy"  .
+# 22009 ?
+   #   <VS:9:Class foo:roundRect>
+       :Class_foo  :hasAsCaptured  "Class foo"  .
+# 22010 ?
+   #   <VS:10:Plane cessna:roundRect>
+       :Plane_cessna  :hasAsCaptured  "Plane cessna"  .
+# 100000 ?
+   #   V0:100000:I am the LW-MAP indeed
+       :I_am_the_LW-MAP_indeed  :hasAsCaptured  "I am the LW-MAP indeed"  .
+# 215193 ?
+   #   <VS:193193:placeholder-cuz-node-lacks-shape:shape-for-mystery_VueNode_190_x>
+       :placeholder-cuz-node-lacks-shape  :hasAsCaptured  "placeholder-cuz-node-lacks-shape"  .

@@ -1,0 +1,6 @@
+<LW-MAP autoSized="false" strokeWidth="0.0" height="144.5" width="443.0" y="0.0" x="0.0" label="vue_sample_TINY1.vue" ID="0" xsi:noNamespaceSchemaLocation="none" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+     <vuechild_node label="this_is_the_label_of_node_A" ID="2"></vuechild_node>
+     <vuechild_node label="Car chevy" ID="3"></vuechild_node>
+     <vuechild_node label="Class foo" ID="9"></vuechild_node>
+     <vuechild_node label="Plane cessna" ID="10"></vuechild_node>
+</LW-MAP>
