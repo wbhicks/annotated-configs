@@ -299,7 +299,10 @@
                     ; (setq next-screen-context-lines 12)
                     ; for X on HXEQSIYC's Hansol:
                     ; (setq next-screen-context-lines 27)
-(setq next-screen-context-lines 28)
+                    ; for X on HXEQSIYC's sm700nf:
+                    ; (setq next-screen-context-lines 32)
+
+(setq next-screen-context-lines 32)
 
 ;; CHECK!
 ;; i have a feeling this doesn't work for the same reason .muttrc gets the empty string
@@ -456,9 +459,7 @@ character following the word. Meant to keep one space between words."
 		    ; auto-fill-mode can't be invoked globally.
 		    ; See also LISP-ISH MODES.
 
-;            For now I want to play with one-line mail headers
-;            so I commented this out:
-;;(add-hook 'post-mode-hook '(lambda () (auto-fill-mode 1)))
+(add-hook 'post-mode-hook '(lambda () (auto-fill-mode 1)))
 ;            It can corrupt config files so I'll invoke it manually:
 ;;(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
 
@@ -467,7 +468,7 @@ character following the word. Meant to keep one space between words."
 ;;(add-hook 'post-mode-hook '(lambda () (refill-mode 1)))
 
 		    ; For auto-fill-mode. Word wrap is triggered at this column.
-(setq-default fill-column 140) ; was 90 or 109
+(setq-default fill-column 138) ; was 90 or 109
 		    ; `setq-default' is the only way to set the global value of a
 		    ; variable that has been marked with `make-variable-buffer-local'.
  
