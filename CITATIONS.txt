@@ -1,0 +1,6 @@
+Citations and attributions for the source code files in this project
+--------------------------------------------------------------------
+
+The source code files in this project have contained, and may still contain, code blocks and comments that I copied from other open-source programming projects. I copied these code blocks and comments consistent with the open-source licenses under which they were offered. To the best of my knowledge, the open-source license that I have applied to this project is consistent with those licensing terms.
+
+In order to give proper credit to the authors of those code blocks and comments, I included the following information when it was available to me (that is, when it was publicly available): their names and how to reach them. I also included publication dates, where known. I included this information in-line, i.e. alongside the contribution.
