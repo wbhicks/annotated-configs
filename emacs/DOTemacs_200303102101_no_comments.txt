@@ -74,6 +74,14 @@
 ;
 ;
 
+;
+;
+;
+(global-set-key [f8] 'bury-buffer)
+
+;
+;
+;
 
 (custom-set-variables
   ;
@@ -82,7 +90,83 @@
 (custom-set-faces
   ;
   ;
- '(custom-documentation-face ((t (:inverse-video nil)))))
+ '(Info-title-1-face ((((type tty pc) (class color)) (:foreground "yellow"))))
+ '(Info-title-2-face ((((type tty pc) (class color)) (:foreground "blue"))))
+ '(custom-documentation-face ((t (:inverse-video nil))))
+ '(custom-group-tag-face ((t (:foreground "blue" :weight bold :height 1.2))))
+ '(custom-variable-tag-face ((t (:inherit variable-pitch :foreground "red1" :weight bold :height 1.2))))
+ '(font-lock-builtin-face ((((type tty) (class color)) (:foreground "blue" :underline t))))
+ '(font-lock-comment-face ((((type tty pc) (class color) (background dark)) (:foreground "red"))))
+ '(font-lock-constant-face ((((type tty) (class color)) (:foreground "magenta"))))
+ '(font-lock-keyword-face ((t (:foreground "blue"))))
+ '(font-lock-string-face ((((type tty) (class color)) (:foreground "red"))))
+ '(font-lock-type-face ((((type tty) (class color)) (:underline t))))
+ '(font-lock-variable-name-face ((((type tty) (class color)) (:foreground "blue" :underline t :weight bold))))
+ '(font-lock-warning-face ((((type tty) (class color)) (:background "black" :foreground "red"))))
+ '(hi-pink ((((background dark)) (:foreground "white"))))
+ '(info-node ((t (:foreground "black"))))
+ '(info-xref ((t (:foreground "red" :weight bold))))
+ '(post-double-quoted-text-face ((t (:inherit post-quoted-text-face :weight bold))))
+ '(post-header-keyword-face ((t (:foreground "red" :weight bold))))
+ '(post-multiply-quoted-text-face ((t (:foreground "cyan"))))
+ '(post-quoted-text-face ((t (:foreground "blue"))))
+ '(show-paren-match-face ((((class color)) (:foreground "red" :weight bold))))
+ '(show-paren-mismatch-face ((((class color)) (:background "white" :foreground "magenta" :underline t :weight bold))))
+ '(vhdl-font-lock-attribute-face ((((class color) (background dark)) (:background "black" :foreground "white"))))
+ '(vhdl-font-lock-directive-face ((((class color) (background dark)) (:background "black" :foreground "Aquamarine"))))
+ '(vhdl-font-lock-enumvalue-face ((((class color) (background dark)) (:background "black" :foreground "BurlyWood"))))
+ '(vhdl-font-lock-function-face ((((class color) (background dark)) (:background "black" :foreground "Orchid1")))))
+
+
+;
+;
+;
+
+;
+;
+;
+
+(hi-lock-mode 1)
+(highlight-regexp "(" 'hi-pink)
+(highlight-regexp ")" 'hi-pink)
+
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+
+(require 'paren)
+(show-paren-mode 1)
+
+;
+
+(auto-fill-mode 1)
+(global-set-key "\M-s" 'fill-region)
+
+;
+;
+;
+
+;
+;
+;
 
 ;
 ;
@@ -93,18 +177,44 @@
 (load "~/post-mode/post")
 
 (setq default-major-mode 'text-mode)
-;
-;
-;
-(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
 
 (setq abbrev-file-name "~/.emacs_abbrevs")
 (quietly-read-abbrev-file)
 (add-hook 'text-mode-hook '(lambda () (abbrev-mode 1)))
 
+;
+;
+;
+
 (setq inferior-lisp-program "clisp")
+;
 (setq truncate-partial-width-windows nil)
 
+;
+;
+
+(add-hook 'lisp-mode-hook '(lambda () (hs-minor-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (hs-minor-mode 1)))
+
+;
+(defvar my-hs-hide nil "Current state of hideshow for toggling all.")
+;
+(defun my-toggle-hideshow-all () "Toggle hideshow all."
+  (interactive)
+  (setq my-hs-hide (not my-hs-hide))
+  (if my-hs-hide 
+      (hs-hide-all)
+    (hs-show-all)))
+
+;
+;
+
+(global-set-key "\C-cc" 'hs-toggle-hiding)
+;
+(global-set-key "\C-cC" 'my-toggle-hideshow-all)
+
+;
+;
 ;
 
 
