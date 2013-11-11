@@ -1,118 +1,250 @@
-; when emacs lacks its own X window, <backspace> triggers Help.
-; (n.b.: F1 invokes Help anyway, so you don't need to remember
-; the bit about C-x ? below. )
-; this makes the <backspace> key work properly:
+; ------------------------------------------------------------
+;
+;    SANITY-SAVING PRELIMINARIES
+;
+; ------------------------------------------------------------
+
+		    ; protect against trojans
+(setq enable-local-variables 'query)
+
+		    ; n.b. There are other CL compatability files besides cl.elc; look at
+		    ; its cl-* siblings. But those don't "provide features" (with
+		    ; provide), so I'm not yet sure how to load them, unless I simply fall
+		    ; back on calls like (load "cl-extra"). 
+(require 'cl-19 "cl")
+
+(setq load-path (cons "~/.emacs_lisp" load-path))
+(require 'my-buff-menu)
+
+;; A useful time-saver when hacking this file: C-x C-e to send just the preceding sexp to emacs
+
+;; C-] to abort-recursive-edit (e.g. you cause an error in Lisp Interaction mode and the
+;; mode line shows square brackets; C-] gets rid of them.) Cf. C-d in Inferior Lisp mode.
+
+
+;;    About Lisp comments
+;; ------------------------------------------------------------
+
+
+;; TAB (lisp-indent-line) indents a comment depending on the number of semicolons, mostly
+;; in accordance with Lisp style conventions:
+
+;; One semicolon causes it to be indented to the value of comment-column, which you can
+;; set with `C-x ;' (comment-set-column, aka set-comment-column).
+
+;; Two semicolons cause it to be indented like a line of code.
+
+;; Three semicolons cause it to be ignored. Lisp convention is that comments which start
+;; with three semicolons are supposed to start at the left margin. Note that
+;; lisp-indent-line doesn't actually do this. In the odd case where you have somehow
+;; indented a three-semicolon line, TABbing it won't left-justify it, but rather will
+;; leave it alone. Two semicolons work better. Since an isolated line of code (i.e. one
+;; not nested in a block) would normally be left-justified, and since two semicolons cause
+;; a comment to be indented like code, using two for isolated comment blocks is a good
+;; idea: e.g. as you paste such a block into nested code and then move it out again,
+;; lisp-indent-line will keep it correctly indented. For this reason I avoid the
+;; three-semicolon convention.
+
+;; `M-;' Insert or realign comment on current line; alternatively, comment
+;;      or uncomment the region (`comment-dwim').
  
-(setq key-translation-map (or key-translation-map (make-keymap)))
-(define-key key-translation-map "\C-x?" "\C-h")
-(define-key key-translation-map "\C-h" (kbd "DEL"))
+;; `C-u M-;' Kill comment on current line (`comment-kill') but leave the
+;;      code alone.
+
+
+; ------------------------------------------------------------
+;
+;    END OF SANITY-SAVING PRELIMINARIES
+;
+; ------------------------------------------------------------
+
+
+; ------------------------------------------------------------
+;
+;    FACES (apart from the customization interface)
+;
+; ------------------------------------------------------------
+
+
+;;    In FACES -- For hi-lock mode
+;; ------------------------------------------------------------
+
+
+(defface hi-cyan
+  '((t (:foreground "cyan")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
  
-;
-;This tells C-h to behave like DEL does normally, and it tells C-x ? to
-;behave like C-h does normally.  That is, instead of C-h k to find out
-;the meaning of a key, you now type C-x ? k.  And C-h works as you
-;want, even in isearch.
-;
-;However, beware: I haven't really tested this, just tried it for maybe
-;30 seconds.  I will add this to my own init file, though, so when the
-;need arises to use Emacs in non-X mode, I will see what happens.
-;
-;But please note the following: if you're using Emacs under X, all of
-;this is not necessary: Backspace already deletes to the left and C-h
-;gives you help.
-;
-;-- Kai Grossjohann, Informatik VI        grossjohann@ls6.cs.uni-dortmund.de
+(defface hi-cyan-b
+  '((t (:weight bold :foreground "cyan")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
  
-;
-; why ctrl-RIGHT doesn't work under -nw option (for now):
-;
-;> 2) control-up arrow (down arrow) do not recall
-;> previous commands
-;> 3) control left/right arrows do not go to the
-;> next/previous words
-;
-;This is not so easy to do, since the terminal probably doesn't know
-;about these keys.  That is, when you hit C-<left>, the terminal sends
-;<left> to the application.  Since the application never learns that
-;the ctrl key was pressed, it cannot react.
-;
-;But if your terminal is programmable, you can do that.  The first
-;thing to do is to find out the escape sequence for <left> and program
-;the terminal to emit a *different* escape sequence for C-<left>.
+(defface hi-magenta
+  '((t (:foreground "magenta")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
  
-; these work but they screw up the page-up and page-down keys:
+(defface hi-magenta-b
+  '((t (:weight bold :foreground "magenta")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+ 
+(defface hi-red
+  '((t (:foreground "red")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+ 
+(defface hi-yellow-b
+  '((t (:weight bold :foreground "yellow")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+ 
+(defface hi-grey
+  '((t (:foreground "white")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-blue-on-grey
+  '((t (:background "white" :foreground "blue")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+(defface hi-black-on-mustard
+  '((t (:background "yellow" :foreground "black")))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+                    ; for my abbrev highlighting 
+(defface hi-bold
+  '((t (:weight bold)))
+  "Face for hi-lock mode."
+  :group 'hi-lock-faces)
+
+
+;;    In FACES -- For console-sensitive color prefs
+;; ------------------------------------------------------------
+
+
+;; FOR NOW, set the 'default' face with M-x customize.
+
+		    ; defface is a macro, so we can't just insert an if clause in place of
+		    ; the string "blue". Instead we'll use an if that surrounds two such
+		    ; macros.
+
+                    ; isn't working yet - see customize
+;; (if (equal (getenv "DISP_COLOR_PREF") "console")
+;;     (defface default
+;;       '((t (:stipple nil :background "unspecified-bg" :foreground "cyan" :inverse-video
+;;                      nil :box nil :strike-through nil :overline nil :underline nil :slant 
+;;                      normal :weight normal :height 1 :width normal :family "default")))
+;;       "See my .emacs."
+;;       :group 'basic-faces)
+;;   (defface default
+;;     '((t (:stipple nil :background "unspecified-bg" :foreground "unspecified-fg" :inverse-video 
+;;                    nil :box nil :strike-through nil :overline nil :underline nil :slant
+;;                    normal :weight normal :height 1 :width normal :family "default")))
+;;     "See my .emacs."
+;;     :group 'basic-faces))
+
+(if (equal (getenv "DISP_COLOR_PREF") "console")
+    (defface post-quoted-text-face 
+      '((t (:foreground "yellow")))
+      "See my .emacs."
+      :group 'post-faces)
+  (defface post-quoted-text-face 
+    '((t (:foreground "blue")))
+    "See my .emacs."
+    :group 'post-faces))
+
+(if (equal (getenv "DISP_COLOR_PREF") "console")
+    (defface post-double-quoted-text-face 
+      '((t (:foreground "cyan")))
+      "See my .emacs."
+      :group 'post-faces)
+  (defface post-double-quoted-text-face 
+    '((t (:inherit post-quoted-text-face :weight bold)))
+    "See my .emacs."
+    :group 'post-faces))
+
+(if (equal (getenv "DISP_COLOR_PREF") "console")
+    (defface post-multiply-quoted-text-face 
+      '((t (:foreground "yellow")))
+      "See my .emacs."
+      :group 'post-faces)
+  (defface post-multiply-quoted-text-face 
+    '((t (:foreground "cyan")))
+    "See my .emacs."
+    :group 'post-faces))
+
+(defface post-header-keyword-face
+  '((t (:foreground "red" :weight bold)))
+  "See my .emacs."
+  :group 'post-faces)
+
+(if (equal (getenv "DISP_COLOR_PREF") "console")
+    (defface font-lock-comment-face
+      '((t (:foreground "cyan")))
+      "See my .emacs."
+      :group 'font-lock-highlighting-faces)
+  (defface font-lock-comment-face
+    '((t (:foreground "blue")))
+    "See my .emacs."
+    :group 'font-lock-highlighting-faces))
+
+;; font-lock-keyword-face is by default cyan bold. This is great under console, but I
+;; haven't yet seen it under X. I had previously customized it (for X) as blue (non-bold),
+;; but that was too dark under console. So I've restored the default, and will wait to see
+;; how it looks under X.
+
+
+; ------------------------------------------------------------
 ;
-;(global-set-key "\M-]" 'forward-word)
-;(global-set-key "\M-[" 'backward-word)
-
-; in desperation I made the left and right arrow keys _always_
-; jump words:
-; 
-(global-set-key [right] 'forward-word)
-(global-set-key [left] 'backward-word)
-
-; now let's see if C-left and C-right (or M-...) are visible -- if so,
-; they can move by character and we won't need to use
-; C-b and C-f... (much trial-and-error) ... nope, they're
-; not visible.
-
-; Nov 17 2001 - gotta get my char-by-char jump back...
-(global-set-key "{" "[")
-(global-set-key "}" "]")
-(global-set-key "]" 'forward-char)
-(global-set-key "[" 'backward-char)
-
-; Normally, both C-_ and C-/ mean "undo".
-; I'm not making any changes here, but I'm writing this note because I'm
-; about to make C-_ the escape (command) sequence for SCREEN -- i.e. the
-; GNU app called _screen_. Since I'm using emacs under screen, I expect
-; that emacs can no longer count on getting the C-_ signal; therefore,
-; plan on working with C-/ when necessary.
-; wbhicks July 1 2001
+;    END OF EXTRA FACES
 ;
-; PROBLEM: C-/ _also_ gets trapped by SCREEN. Hmmm...
-;
-; OK, now I've gotten screen to use C-\
+; ------------------------------------------------------------
 
-; I am using F5, F6 and F7 for SCREEN -- i.e. the GNU app called _screen_.
-; I'd like similar access to buffers in emacs...
-; let F8 cycle buffers (normally there's no key binding for this!)
-(global-set-key [f8] 'bury-buffer)
 
-(load "~/post-mode/post")
+; ------------------------------------------------------------
+;
+;    CUSTOMIZATIONS (Don't touch this section)
+;
+; ------------------------------------------------------------
 
-;
-; FONT-LOCK
-;
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
   ;; Your init file should contain only one such instance.
- '(global-font-lock-mode t nil (font-lock)))
+ '(blink-cursor nil)
+ '(blink-cursor-interval 2.0)
+ '(global-font-lock-mode t nil (font-lock))
+ '(post-kill-quoted-sig nil)
+ '(post-uses-fill-mode nil))
 (custom-set-faces
   ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
   ;; Your init file should contain only one such instance.
+ '(default ((t (:stipple nil :background "unspecified-bg" :foreground "cyan" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :family "default"))))
  '(Info-title-1-face ((((type tty pc) (class color)) (:foreground "yellow"))))
  '(Info-title-2-face ((((type tty pc) (class color)) (:foreground "blue"))))
+ '(cursor ((t (:foreground "blue"))))
  '(custom-documentation-face ((t (:inverse-video nil))))
  '(custom-group-tag-face ((t (:foreground "blue" :weight bold :height 1.2))))
  '(custom-variable-tag-face ((t (:inherit variable-pitch :foreground "red1" :weight bold :height 1.2))))
- '(font-lock-builtin-face ((((type tty) (class color)) (:foreground "blue" :underline t))))
- '(font-lock-comment-face ((((type tty pc) (class color) (background dark)) (:foreground "red"))))
+ '(font-lock-builtin-face ((((type tty) (class color)) (:foreground "blue" :underline t :weight bold))))
  '(font-lock-constant-face ((((type tty) (class color)) (:foreground "magenta"))))
- '(font-lock-keyword-face ((t (:foreground "blue"))))
+ '(font-lock-doc-face ((t (:inherit font-lock-string-face :background "white"))))
+ '(font-lock-function-name-face ((((type tty) (class color)) (:foreground "red" :underline t :weight bold))))
  '(font-lock-string-face ((((type tty) (class color)) (:foreground "red"))))
- '(font-lock-type-face ((((type tty) (class color)) (:underline t))))
- '(font-lock-variable-name-face ((((type tty) (class color)) (:foreground "blue" :underline t :weight bold))))
+ '(font-lock-type-face ((((type tty) (class color)) (:background "red" :underline t))))
+ '(font-lock-variable-name-face ((((type tty) (class color)) (:foreground "red" :underline t :weight bold))))
  '(font-lock-warning-face ((((type tty) (class color)) (:background "black" :foreground "red"))))
- '(hi-blue ((((background dark)) (:background "white" :foreground "blue" :underline t))))
- '(hi-pink ((((background dark)) (:foreground "white"))))
+ '(hi-blue ((((background dark)) (:foreground "blue"))))
+ '(hi-green ((((background dark)) (:foreground "green"))))
+ '(hi-yellow ((((background dark)) (:foreground "yellow"))))
  '(info-node ((t (:foreground "black"))))
  '(info-xref ((t (:foreground "red" :weight bold))))
- '(post-double-quoted-text-face ((t (:inherit post-quoted-text-face :weight bold))))
- '(post-header-keyword-face ((t (:foreground "red" :weight bold))))
- '(post-multiply-quoted-text-face ((t (:foreground "cyan"))))
- '(post-quoted-text-face ((t (:foreground "blue"))))
+ '(mode-line ((t (:weight bold))))
+ '(region ((((type tty) (class color)) (:foreground "yellow"))))
  '(show-paren-match-face ((((class color)) (:foreground "red" :weight bold))))
  '(show-paren-mismatch-face ((((class color)) (:background "white" :foreground "magenta" :underline t :weight bold))))
  '(vhdl-font-lock-attribute-face ((((class color) (background dark)) (:background "black" :foreground "white"))))
@@ -121,80 +253,404 @@
  '(vhdl-font-lock-function-face ((((class color) (background dark)) (:background "black" :foreground "Orchid1")))))
 
 
+; ------------------------------------------------------------
 ;
-; END OF FONT-LOCK
+;    END OF CUSTOMIZATIONS
 ;
+; ------------------------------------------------------------
 
+
+; ------------------------------------------------------------
 ;
-; GLOBAL MINOR MODES
+;    MISC
 ;
+; ------------------------------------------------------------
+
+
+;;    In MISC -- Moving around
+;; ------------------------------------------------------------
+
+
+;; see also LINES env var
+		    ; let next and prior scroll more modestly, so that fewer lines drop
+		    ; off the screen when you hit the 'page up' or 'page down' keys
+		    ; for DMFMIUAI's CRT:
+		    ;(setq next-screen-context-lines 29)
+		    ; for X on GPJOJXPX's CRT:
+		    ; (setq next-screen-context-lines 21)
+		    ; for the console on GPJOJXPX's CRT:
+                    ; (setq next-screen-context-lines 12)
+(if (equal (getenv "DISP_COLOR_PREF") "console")
+    (setq next-screen-context-lines 12)
+  (setq next-screen-context-lines 21))
+
+                    ; put that top line to use 
+(menu-bar-mode 0)
+
+		    ; show column number
+(setq column-number-mode t)
+
+		    ; home and end keys on DMFMIUAI, at least
+(global-set-key "\M-[h" 'beginning-of-line)
+(global-set-key "\M-[F" 'end-of-line)
+
+		    ; I want an easier way to move by words ...  these work but they screw
+		    ; up the page-up and page-down keys: 
+		    ; (global-set-key "\M-]" 'forward-word) 
+		    ; (global-set-key "\M-[" 'backward-word) 
+		    ; So I made the left and right arrow keys _always_ jump words:
+(global-set-key [right] 'forward-word)
+(global-set-key [left] 'backward-word)
+		    ; now let's see if C-left and C-right (or M-...) are visible -- if
+		    ; so, they can move by character and we won't need to use C-b and
+		    ; C-f...  (much trial-and-error) ... nope, they're not visible.
+
+		    ; Nov 17 2001 - gotta get my char-by-char jump back...
+(global-set-key "]" 'forward-char)
+(global-set-key "[" 'backward-char)
+
+		    ; now to regain access to the brackets. These don't work:
+;(global-set-key "{" "[")
+;(global-set-key "}" "]")
+;(global-set-key "\C-b" "[")
+;(global-set-key "\C-b" (kbd "["))
+		    ; etc.  No solution yet... Aha! Mar 31 2002 - I learned about
+		    ; quoted-insert (C-q). So I can just use C-q 
+		    ; followed by the literal bracket.
+
+
+;;    In MISC -- Hi-lock
+;; ------------------------------------------------------------
+
 
 (hi-lock-mode 1)
+		    ; BTW, Lispish-modes only: hi-lock-mode is ALSO the way I color parens
+		    ; - I failed to get font-lock to color parens, after much effort.
 
-; hi-lock-mode is like font-lock but interactive. similar
-; to the way isearch highlights each instance of the search
-; term (assuming font-lock is on, which in my case it always 
-; is), except that with hi-lock-mode the highlights stay 
-; until you turn them off, plus you can select colors etc.
-; 
-; BTW, for lispish-modes only:
-; hi-lock-mode is ALSO the way I color parens - I failed to
-; get font-lock to color parens, after much effort.
+		    ; Now let's let the user discover the
+		    ; extra faces we defined earlier
+(setq hi-lock-face-history
+  (list "hi-blue" "hi-blue-b" "hi-yellow" "hi-yellow-b" "hi-cyan" "hi-cyan-b" 
+	"hi-red" "hi-red-b" "hi-black-b" "hi-blue-on-grey" "hi-black-on-mustard" 
+	"hi-green" "hi-green-b" "hi-magenta" "hi-magenta-b" "hi-grey" "hi-pink"
+	"hi-black-hb"))
 
-;            as nearly global as I can make it:
-(add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
-(add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
-;            Turn on Auto Fill mode automatically 
-;            in Text mode and related modes:
-(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
 
-; auto-fill doesn't handle pre-filled text - it breaks but
-; doesn't combine. For that I need manual fill, for which
-; this key-rebinding is handy (M-s is typically center-line).
+;;    In MISC -- Deleting and undoing
+;; ------------------------------------------------------------
 
-(global-set-key "\M-s" 'fill-region)
 
+;; When emacs lacks its own X window, <backspace> triggers Help. (n.b. F1 invokes Help
+;; anyway, so you don't need to remember the bit about C-x ?  below. ) This makes the
+;; <backspace> key work properly:
+
+(setq key-translation-map (or key-translation-map (make-keymap)))
+(define-key key-translation-map "\C-x?" "\C-h")
+(define-key key-translation-map "\C-h" (kbd "DEL"))
+ 
+;; This tells C-h to behave like DEL does normally, and it tells C-x ? to behave like C-h
+;; does normally.  That is, instead of C-h k to find out the meaning of a key, you now
+;; type C-x ? k.  And C-h works as you want, even in isearch.  However, beware: I haven't
+;; really tested this, just tried it for maybe 30 seconds.  I will add this to my own init
+;; file, though, so when the need arises to use Emacs in non-X mode, I will see what
+;; happens.  But please note the following: if you're using Emacs under X, all of this is
+;; not necessary: Backspace already deletes to the left and C-h gives you help.
+;; -- Kai Grossjohann, Informatik VI        grossjohann@ls6.cs.uni-dortmund.de
+
+		    ; I want to wean myself off the use of C-_ for undo, in favor of 
+		    ; C-/. But C-_ and C-/ seem to be the same character, so 
+		    ; I can't just unbind C-_ from undo.
+(global-set-key "\C-_" (lambda () 
+			 (interactive)
+			 (undo)
+			 (message "C-/ is undo")))
+
+(defun my-kill-word (arg)
+  "Like kill-word, but kills trailing space or hyphen if it did not already kill a leading
+one. More precisely, if called when point is not on a space or hyphen then it kills the
+character following the word. Meant to keep one space between words."
+  (interactive "p")
+  (let ((began-with (char-to-string (char-after))))
+    (kill-region (point)
+		 (progn (forward-word arg) 
+			(or (equal " " began-with)
+			    (equal "-" began-with)
+			    (forward-char))
+			(point)))))
+
+(global-set-key "\M-d" 'my-kill-word)
+
+
+; ------------------------------------------------------------
 ;
-; END OF GLOBAL MINOR MODES
+;    END OF MISC
 ;
+; ------------------------------------------------------------
 
+
+; ------------------------------------------------------------
 ;
-; see http://www.emacswiki.org/cgi-bin/wiki.pl?HtmlHelperMode
+;    TEXT-ISH MODES
 ;
+; ------------------------------------------------------------
+
+
+;;    In TEXT-ISH MODES -- Similar major modes
+;; ------------------------------------------------------------
+
+
+		    ; html-helper-mode is in the site-lisp subdir
+		    ; There is also hhm-config.el but it seems to be only
+		    ; for people who want to use M-x customize on the
+		    ; html-helper-mode faces without having to load the mode.
+		    ; See also http://www.emacswiki.org/cgi-bin/wiki.pl?HtmlHelperMode
 (autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
-(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode)       auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.htm$" . html-helper-mode) auto-mode-alist))
 
+(require 'post)
+
+		    ; Make Text mode the default mode for new buffers.
+		    ; I tried post-mode but it messes up buffer names.
 (setq default-major-mode 'text-mode)
+
+
+;    In TEXT-ISH MODES -- Filling
+; ------------------------------------------------------------
+
+
+		    ; auto-fill-mode can't be invoked globally.
+		    ; See also LISP-ISH MODES.
+
+;            For now I want to play with one-line mail headers
+;            so I commented this out:
+;;(add-hook 'post-mode-hook '(lambda () (auto-fill-mode 1)))
+;            It can corrupt config files so I'll invoke it manually:
+;;(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
+
+		    ; For auto-fill-mode. Word wrap is triggered at this column.
+(setq-default fill-column 90)
+		    ; `setq-default' is the only way to set the global value of a
+		    ; variable that has been marked with `make-variable-buffer-local'.
+ 
+		    ; in Text mode and related modes (e.g. Post mode) manual fill
+		    ; is useful. That's because auto-fill doesn't handle pre-filled
+		    ; text - it breaks but doesn't combine. For that I need manual
+		    ; fill, of which fill-paragraph (M-q) and fill-region are examples.
+		    ; But fill-region needs a better binding. I want to use M-s which 
+		    ; is typically center-line. But if I use a global rebinding it will be
+		    ; overridden in whatever modes bind center-line, e.g. Post and
+		    ; Text modes. So I must use a hook (this affects post-mode too):
+(add-hook 'text-mode-hook
+	  '(lambda ()
+	     (define-key text-mode-map "\M-s"
+	       'fill-region)))
+
+
+;    In TEXT-ISH MODES -- Abbreviations
+; ------------------------------------------------------------
+
+
+		    ; none of this affects dynamic abbreviations -- i.e. M-/
 
 (setq abbrev-file-name "~/.emacs_abbrevs")
 (quietly-read-abbrev-file)
-(add-hook 'text-mode-hook '(lambda () (abbrev-mode 1)))
 
-;
-; FOR WRITING LISP CODE
-;
+		    ; this affects post-mode too:
+;;(add-hook 'text-mode-hook '(lambda () (abbrev-mode 1)))
+		    ; ...but for now I'll restrict abbrevs to post-mode:
+(add-hook 'post-mode-hook '(lambda () (abbrev-mode 1)))
 
-(setq inferior-lisp-program "clisp")
-; so clisp can occupy a tall narrow window...
+; LEFT OFF HERE MAY 16 - PUT IN SEP FILE...
+
+; LEFT OFF HERE APR 14 2002 - RESUME HERE
+; and on May 11, up till here is perfecto...
+; =============== hacking the abbrev preview idea... ======================
+
+;; Speculation:
+;; Expansion should be restricted to the following cases:
+;; (are there dependencies in this list?)
+;; The abbrev saves >= 4 keystrokes
+;; The abbrev is OK for in-house memos, but not for formal biz correspondence (e.g. hrs =
+;; hours, mssg = message)
+;; The abbrev is techie and not known to outsiders (e.g. dev = development)
+;; It fixes a typo
+;; Other rules:
+;; Don't include a comma in the expansion, even if it typically follows (e.g. fyi,
+;; imho), except in case of salutations (e.g. wbr)
+;; Remember, case is handled automatically :-)
+
+		    ; my constant. based on abbrev-file-name
+(defconst hi-lock-file-name
+  (if (eq system-type 'vax-vms)
+      "~/hilock.def"
+    (convert-standard-filename "~/.emacs_hi-lock_regexps"))
+  "*Default name of file from which to read regexps for hi-lock.")
+
+(defun my-abbrev-name (arg)
+  (let (name start end)
+    (save-excursion
+      (forward-word (1+ (- arg)))
+      (setq end (point))
+      (backward-word 1)
+      (setq start (point)
+            name (buffer-substring-no-properties start end)))
+    (downcase name)))
+
+
+(add-hook 'post-mode-hook '(lambda () (my-load-hilight-list)))
+
+(defun my-load-hilight-list ()
+  (interactive)
+  (setq my-hilight-list nil)
+  (load hi-lock-file-name)
+  (let ((the-list my-hilight-list))
+    (while the-list
+      (highlight-regexp (car the-list) 'hi-bold)
+      (setq the-list (cdr the-list)))))
+
+(defun starts-with (word prefix)
+  (string= prefix (substring word 0 (length prefix))))
+
+(defun my-modest-abbrev-and-highlight (arg)
+  (interactive "p")   
+		    ; 1. grab the name
+  (let ((the-abbrev (my-abbrev-name arg)))
+		    ; 2. process it as an abbrev - here this function
+		    ; swallows inverse-add-mode-abbrev because that is interactive
+    (inverse-add-abbrev
+     (if only-global-abbrevs
+	 global-abbrev-table
+       (or local-abbrev-table
+	   (error "No per-mode abbrev table")))
+     "Mode" arg)
+		    ; 3. if it's a prefix abbrev, highlight the string 
+		    ; and add it to the list
+    (if (starts-with (abbrev-expansion the-abbrev post-mode-abbrev-table) the-abbrev)
+	(progn
+	  (highlight-regexp the-abbrev 'hi-bold)
+	  (setq my-hilight-list (cons the-abbrev my-hilight-list))))))
+
+(defun my-save-hilight-list ()
+  (interactive)
+  (save-excursion
+    (set-buffer (get-buffer-create " write-hilight-abbrev-file"))
+    (erase-buffer)
+    (let ((the-list my-hilight-list)
+	  (the-buffer (get-buffer " write-hilight-abbrev-file")))
+      (princ "(setq my-hilight-list '(" the-buffer)
+      (while the-list
+	(princ "\"" the-buffer)
+	(princ (car the-list) the-buffer)
+	(princ "\" " the-buffer)
+	(setq the-list (cdr the-list)))
+      (princ "))" the-buffer))
+    (write-region 1 (point-max) hi-lock-file-name)
+;    (erase-buffer)))
+))
+
+(defun my-save-some-buffers (&optional arg pred)
+  (interactive "P")
+  (if (or arg
+	  (y-or-n-p (format "Save hi-lock abbrev patterns in %s? " hi-lock-file-name)))
+      (my-save-hilight-list))
+  (save-some-buffers arg pred))
+
+(defun my-save-buffers-kill-emacs (&optional arg)
+  (interactive "P")
+  (if (or arg
+	  (y-or-n-p (format "Save hi-lock abbrev patterns in %s? " hi-lock-file-name)))
+      (my-save-hilight-list))
+  (save-buffers-kill-emacs arg))
+
+
+(global-set-key "\C-xail" 'my-modest-abbrev-and-highlight)
+(global-set-key "\C-xs" 'my-save-some-buffers)
+(global-set-key [?\C-x ?\C-c] 'my-save-buffers-kill-emacs)
+
+
+; ============================== end of the abbrev hack area =============
+
+
+
+
+; -------------------------------------------
+;
+;    END OF TEXT-ISH MODES
+;
+; -------------------------------------------
+
+
+; -------------------------------------------
+;
+;    LISP-ISH MODES
+;
+; -------------------------------------------
+
+; THE TABS MADE A GLITCH IN EMACS LISP AS WELL AS CL - FIX
+
+		    ; The clisp authors say "tabs are anachronistic."
+		    ; Use only spaces, no tabs, for indents:
+(setq-default indent-tabs-mode nil)
+
+		    ; This is the program invoked with M-x run-lisp. Without the -I
+		    ; option, clisp will behave strangely when you send it (e.g. via
+		    ; lisp-eval-defun) a sexp that includes a sequence of 2 or more
+		    ; TABs. Since almost all defuns have some deeply-indented lines, -I is
+		    ; a practical necessity. BTW, the problem seems to stem from a clisp
+		    ; feature that uses TAB to auto-complete symbol names. -I disables
+		    ; this feature.
+		    ; (n.b.: by setting indent-tabs-mode to nil, above, we ensured that
+		    ; our freshly-written CL code will have no tabs. But we'll keep the -I
+		    ; option for now in case we want to send clisp some 3rd party code.) 
+(setq inferior-lisp-program "clisp -I")
+
+		    ; So clisp can occupy a tall narrow window:
 (setq truncate-partial-width-windows nil)
 
-(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+		    ; see top of this file
+(add-hook 'lisp-mode-hook '(lambda () (setq comment-column 20)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (setq comment-column 20)))
 
-; for lispish-modes only:
-; hi-lock-mode is ALSO the way I color parens - I failed to
-; get font-lock to color parens, after much effort.
+		    ; BTW, use M-x lisp-mode on your Lisp source code.
+		    ; In that source file use `C-M-x' (lisp-eval-defun)
+		    ; to send a function (the one around point) to the
+		    ; inferior lisp program.                         
+
+
+;    In LISP-ISH MODES -- Minor modes
+; ------------------------------------------------------------
+
+
+(add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+
+		    ; allows comment-dwim to work better
+(add-hook 'lisp-mode-hook '(lambda () (transient-mark-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (transient-mark-mode 1)))
+
+
+;    In LISP-ISH MODES -- Parens
+; ------------------------------------------------------------
+
+
+;; hi-grey = white (as opposed to bold white). It looks great under X against a light
+;; bkgrnd, and on a console (against a black bkgrnd) it looks better than the
+;; alternatives. So I haven't put it in 'FACES -- For console-sensitive color prefs'.
+
+                    ; BTW, highlight-regexp is a function in hi-lock mode:
+(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-grey)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-grey)))
+
+; I failed to get font-lock to color parens, after much effort.
 ;
-; I tried to apply paren-coloring globally, but there were two
+; I tried to apply highlight-regexp globally, but there were two
 ; problems: highlight-regexp must be called from the hooks of 
 ; each major mode in order to take effect, and when called from
 ; text-mode-hook it knocked out the faces in post-mode. I'd
 ; rather have colored quote levels in post-mode than nice parens!
 ;
-; I want a nearly-invisible face for the parens. Since the face
-; hi-pink comes builtin with hi-lock-mode but is ugly as-is,
-; I used M-x customize to change it into a ghostly grey (see 
-; the custom-set-faces entry elsewhere in this .emacs file).
+; I wanted a nearly-invisible face for the parens, so I defined hi-grey.
 ; Now it will take effect without requiring an explicit C-x w h...
 ;
 ; Now, thanks to hi-lock-mode, the parens are nearly invisible. 
@@ -206,13 +662,18 @@
 
 ; Now they flash (global effect, BTW). Next topic...
 
+
+;    In LISP-ISH MODES -- Hideshow
+; ------------------------------------------------------------
+
+
 ; Fundamental and Text Modes don't support Hideshow Minor Mode
 ; So despite its utility it can't be a global minor mode
 
 (add-hook 'lisp-mode-hook '(lambda () (hs-minor-mode 1)))
 (add-hook 'emacs-lisp-mode-hook '(lambda () (hs-minor-mode 1)))
 
-; Additionally, Joseph Eydelnant writes:
+;                             Additionally, Joseph Eydelnant writes:
 (defvar my-hs-hide nil "Current state of hideshow for toggling all.")
 ;;;###autoload
 (defun my-toggle-hideshow-all () "Toggle hideshow all."
@@ -226,16 +687,191 @@
 ; So I'll use a couple of them to make hs-minor-mode easier:
 
 (global-set-key "\C-cc" 'hs-toggle-hiding)
-;   BTW, hs-toggle-hiding is C-c @ C-c by default
+;                             BTW, hs-toggle-hiding is C-c @ C-c by default
 (global-set-key "\C-cC" 'my-toggle-hideshow-all)
 
+
+;    In LISP-ISH MODES -- Side-by-side window collapse
+; ------------------------------------------------------------
+
+
+		    ; Use C-x 3 to get your two windows before invoking these.
+		    ; To understand this code, think of one of the side-by-side
+		    ; windows as the major window, and the other as the minor one.
+		    ; You always want the major one reasonably wide. Sometimes you
+		    ; need the minor one to be wide too, but sometimes it can be 
+		    ; collapsed. (e.g. Lisp source in the major window and a
+		    ; Lisp toplevel or debugger in the minor one.) 
+
+(defvar my-side-window-standard -1 
+  "Used in my-side-window-toggle and -adjust. Column width to which the minor window 
+should return when being un-collapsed.")
+		    ; Initial value of -1 warns that it has never been set.
+
+(defvar my-side-window-collapsed 10
+  "Used in my-side-window-toggle and -adjust. Column width of the minor window when 
+it is collapsed.")
+
+(defun my-side-window-adjust (arg)
+  "Invoke repeatedly from the minor window until its width is about right. 
+My-side-window-toggle will then make the minor window jump between that width 
+and a narrow, collapsed state."
+  (interactive "p")
+  (if (> (window-width) 19)
+      (shrink-window-horizontally 10)
+    (enlarge-window-horizontally 58)) ; a kludge
+  (setq my-side-window-standard (window-width)))
+
+(defun my-side-window-toggle (arg)
+  "Can be invoked from either the major or minor window. Makes the minor window 
+jump between its standard width (set with my-side-window-adjust) and 
+a narrow, collapsed state. If my-side-window-adjust was never called, then we
+do not know which window is meant to be the minor one, and we will assume this
+window is it. You can always set a window to be the minor one by invoking 
+my-side-window-adjust from within it."
+  (interactive "p")
+  (if (= my-side-window-standard -1) ; it has never been set
+      (setq my-side-window-standard (window-width)))
+  (if (and (/= (window-width) my-side-window-standard)
+	   (/= (window-width) my-side-window-collapsed))
+      (other-window 1)) ; we are in major -- go to minor window
+  (my-side-window-toggle-aux arg))
+
+(defun my-side-window-toggle-aux (arg) ; should be in minor window
+  (interactive "p")
+  (if (= (window-width) my-side-window-standard)
+      (progn (shrink-window-horizontally (- my-side-window-standard my-side-window-collapsed))
+             (other-window 1))
+		    ; else window-width should = my-side-window-collapsed
+    (enlarge-window-horizontally (- my-side-window-standard (window-width)))))
+
+(global-set-key [?\C-x left] 'my-side-window-adjust)
+(global-set-key [?\C-x right] 'my-side-window-toggle)
+
+
+;    In LISP-ISH MODES -- Highlight function names
+; ------------------------------------------------------------
+
+
+(defun my-lisp-eval-defun (&optional and-go) 
+  "Highlight the name of the current defun throughout the buffer,
+then send the current defun to the inferior Lisp process.
+Prefix argument means switch to the Lisp buffer afterwards."
+  (interactive "P")
+                    ; 1. grab the name and highlight it - we must avoid picking up a
+                    ; leading space
+  (save-excursion
+    (end-of-defun)
+    (skip-chars-backward " \t\n\r\f") ; Makes allegro happy - see lisp-eval-defun
+    (beginning-of-defun)
+    (forward-word 1) ; go to just after the word 'defun'
+    (forward-sexp)  ; go to just after the function name
+    (setq end (point))
+    (backward-sexp) ; go to the start of the function name
+    (highlight-regexp (regexp-quote (buffer-substring-no-properties (point) end)) 'hi-bold))
+                    ; 2. let lisp-eval-defun take over
+  (lisp-eval-defun and-go))
+
+(defun my-eval-defun (&optional edebug-it) 
+  "Highlight the name of the current defun throughout the buffer,
+then call eval-defun."
+  (interactive "P")
+                    ; 1. grab the name and highlight it - we must
+		    ; avoid picking up a leading space
+  (save-excursion
+    (end-of-defun)
+    (beginning-of-defun)
+    (forward-word 1) ; go to just after the word 'defun'
+    (forward-sexp)  ; go to just after the function name
+    (setq end (point))
+    (backward-sexp) ; go to the start of the function name
+    (highlight-regexp (regexp-quote (buffer-substring-no-properties (point) end)) 'hi-bold))
+                    ; 2. let eval-defun take over
+  (eval-defun edebug-it))
+
+(add-hook 'lisp-mode-hook
+          '(lambda ()
+             (define-key lisp-mode-map "\M-\C-x"
+               'my-lisp-eval-defun)))
+
+(add-hook 'emacs-lisp-mode-hook
+          '(lambda ()
+             (define-key emacs-lisp-mode-map "\M-\C-x"
+               'my-eval-defun)))
+
+
+; -------------------------------------------
 ;
-; END OF FOR WRITING LISP CODE
+;    END OF LISP-ISH MODES
+;
+; -------------------------------------------
+
+
+;
+; DIRED
 ;
 
+; I wanted Dired to recycle the current buffer rather than always to
+; create new buffers - i.e. I needed an alternative to
+; dired-find-file. Fortunately dired-find-alternate-file already
+; existed - so all I needed to do was to give it an easy key binding.
+; Within Dired I mapped right arrow for this. Next I wanted an
+; alternative to ^ (which is bound by default to dired-up-directory)
+; in two senses: (1) easier to reach and (2) to reuse the current
+; buffer rather than create a new one for the parent. However in this
+; case there was no ready-made replacement for dired-up-directory - so
+; I wrote my-dired-find-alternate-file-updir and bound it to the left
+; arrow.
 
+(defun my-dired-find-alternate-file-updir ()
+  "My hack to improve upon dired-up-directory."
+  (interactive)
+  (set-buffer-modified-p nil)
+  (find-alternate-file ".."))
 
+(add-hook 'dired-load-hook
+	  '(lambda ()
+	     (define-key dired-mode-map [right]
+	       'dired-find-alternate-file)
+	     (define-key dired-mode-map [left]
+	       'my-dired-find-alternate-file-updir)
+	     (define-key dired-mode-map "?"
+	       'my-dired-summary)
+	     (setq dired-listing-switches "-alFX")))
 
+; Should remind myself of diff btwn RETN and right arrow! Invoked with ?
+(defun my-dired-summary ()
+  "Like dired-summary but reminds me of my bindings too."
+  (interactive)
+  (dired-why)
+  ;>> this should check the key-bindings and use
+  ;substitute-command-keys if non-standard
+  (message "> < skip non-dirs   find-dired   g_et  C-u s_witches   m_ark  u_nmark   * BANG unmark all\n+ mkdir  RIGHT go   i_nsert ls   ! shellcmd (no * or   * c_hange char   PCT m rgx on name\nRET go in new buf   M-$ fold     ? implies ? at end)   d_el   x_punge   PCT g content rgx"))
 
+(add-hook 'dired-load-hook
+	  (lambda ()
+	    (load "dired-x")
+	    ;; Set dired-x global variables here.  For example:
+	    ;; (setq dired-guess-shell-gnutar "gtar")
+	    ;; (setq dired-x-hands-off-my-keys nil)
+	    ))
 
+(add-hook 'dired-mode-hook
+	  (lambda ()
+	    ;; Set dired-x buffer-local variables here.  For
+	    ;; example:
+	    ;; (setq dired-omit-files-p t)
+	    ))
 
+;;; for a better ls in dired, check out...
+;;; ls-lisp.el --- emulate insert-directory completely in Emacs Lisp  
+
+;
+; END OF DIRED
+;
+
+		    ; stores in ~/.emacs.desktop (note the dot rather than underbar
+		    ; between the words). "Put these two lines in the bottom of your
+		    ; .emacs file (the later the better):"
+(desktop-load-default)
+(desktop-read)
