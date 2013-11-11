@@ -4,8 +4,14 @@
 ;
 ; ------------------------------------------------------------
 
+                    ; for Mutt
+(server-start)
+; later, set EDITOR to emacsclient -- but unneeded for Mutt
+
 		    ; protect against trojans
 (setq enable-local-variables 'query)
+
+(setq visible-bell t) ; doesn't work
 
 		    ; n.b. There are other CL compatability files besides cl.elc; look at
 		    ; its cl-* siblings. But those don't "provide features" (with
@@ -16,11 +22,22 @@
 (setq load-path (cons "~/.emacs_lisp" load-path))
 (require 'my-buff-menu)
 
+                    ; this, too, is in ~/.emacs_lisp
+(require 'wiki)
+                    ; I think this is the cause of a bug, since I am letting a nonexistent directory
+                    ; (~/Wiki/) be examined in the function wiki-existing-names.
+;; (setq wiki-directories (cons (expand-file-name "~/wiki_emacs/") wiki-directories))
+                    ; This is my solution:
+(setq wiki-directories (cons (expand-file-name "~/wiki_emacs/") nil))
+
+                    ; I don't know why the default for wiki-directories specified a trailing slash
+                    ; and the default for wiki-pub-directory didn't. Oh well...
+(setq wiki-pub-directory (expand-file-name "~/wiki_emacs_html"))
+
 ;; A useful time-saver when hacking this file: C-x C-e to send just the preceding sexp to emacs
 
 ;; C-] to abort-recursive-edit (e.g. you cause an error in Lisp Interaction mode and the
 ;; mode line shows square brackets; C-] gets rid of them.) Cf. C-d in Inferior Lisp mode.
-
 
 ;;    About Lisp comments
 ;; ------------------------------------------------------------
@@ -126,7 +143,7 @@
 ;; ------------------------------------------------------------
 
 
-;; FOR NOW, set the 'default' face with M-x customize.
+;; FOR NOW, set the 'default' face with M-x customize-face default
 
 		    ; defface is a macro, so we can't just insert an if clause in place of
 		    ; the string "blue". Instead we'll use an if that surrounds two such
@@ -223,7 +240,7 @@
 (custom-set-faces
   ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
   ;; Your init file should contain only one such instance.
- '(default ((t (:stipple nil :background "unspecified-bg" :foreground "cyan" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :family "default"))))
+ '(default ((t (:stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :family "default"))))
  '(Info-title-1-face ((((type tty pc) (class color)) (:foreground "yellow"))))
  '(Info-title-2-face ((((type tty pc) (class color)) (:foreground "blue"))))
  '(cursor ((t (:foreground "blue"))))
@@ -271,22 +288,29 @@
 ;; ------------------------------------------------------------
 
 
-;; see also LINES env var
 		    ; let next and prior scroll more modestly, so that fewer lines drop
-		    ; off the screen when you hit the 'page up' or 'page down' keys
-		    ; for DMFMIUAI's CRT:
-		    ;(setq next-screen-context-lines 29)
+		    ; off the screen when you hit the 'page up' or 'page down' keys.
+                    ; If $LINES is unavailable, fall back on one of these:
+		    ; for X on DMFMIUAI's CRT:
+		    ; (setq next-screen-context-lines 29)
 		    ; for X on GPJOJXPX's CRT:
 		    ; (setq next-screen-context-lines 21)
 		    ; for the console on GPJOJXPX's CRT:
                     ; (setq next-screen-context-lines 12)
-(if (equal (getenv "DISP_COLOR_PREF") "console")
-    (setq next-screen-context-lines 12)
-  (setq next-screen-context-lines 21))
+                    ; for X on HXEQSIYC's Hansol:
+                    ; (setq next-screen-context-lines 27)
+(setq next-screen-context-lines 28)
 
-                    ; put that top line to use 
+;; CHECK!
+;; i have a feeling this doesn't work for the same reason .muttrc gets the empty string
+;; when it tries to read DISP_COLOR_PREF - in both cases an env var is visible to me on
+;; the cmd line, but not to the app. I must study env vars ;-)
+;;(let ((i (getenv "LINES")))
+;;  (setq next-screen-context-lines (/ (- i (if (oddp i) 1 2)) 2)))
+
+                    ; put that top line to use
 (menu-bar-mode 0)
-
+    
 		    ; show column number
 (setq column-number-mode t)
 
@@ -347,7 +371,11 @@
 (setq key-translation-map (or key-translation-map (make-keymap)))
 (define-key key-translation-map "\C-x?" "\C-h")
 (define-key key-translation-map "\C-h" (kbd "DEL"))
- 
+
+                    ; use view-lossage to learn these codes. This one looks awkward but 
+                    ; it works!
+(global-set-key "\e[3~" 'delete-char)
+
 ;; This tells C-h to behave like DEL does normally, and it tells C-x ? to behave like C-h
 ;; does normally.  That is, instead of C-h k to find out the meaning of a key, you now
 ;; type C-x ? k.  And C-h works as you want, even in isearch.  However, beware: I haven't
@@ -379,6 +407,12 @@ character following the word. Meant to keep one space between words."
 			(point)))))
 
 (global-set-key "\M-d" 'my-kill-word)
+
+                    ; the insert key on HXEQSIYC was bothering me: it toggled
+                    ; overwrite-mode (I imagine this never arose before because it
+                    ; wasn't being read, for some reason). Here's a better use:
+(global-set-key [insert] 'auto-fill-mode)
+ 
 
 
 ; ------------------------------------------------------------
@@ -428,8 +462,12 @@ character following the word. Meant to keep one space between words."
 ;            It can corrupt config files so I'll invoke it manually:
 ;;(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
 
+                    ; just discovered refill-mode ...
+                    ; but it's mangling quoted text!
+;;(add-hook 'post-mode-hook '(lambda () (refill-mode 1)))
+
 		    ; For auto-fill-mode. Word wrap is triggered at this column.
-(setq-default fill-column 90)
+(setq-default fill-column 140) ; was 90 or 109
 		    ; `setq-default' is the only way to set the global value of a
 		    ; variable that has been marked with `make-variable-buffer-local'.
  
@@ -445,6 +483,12 @@ character following the word. Meant to keep one space between words."
 	  '(lambda ()
 	     (define-key text-mode-map "\M-s"
 	       'fill-region)))
+
+;;; DOESN'T SEEM TO WORK!
+(add-hook 'text-mode-hook
+          '(lambda ()
+             (define-key text-mode-map "\d" 
+               'delete-backward-char)))
 
 
 ;    In TEXT-ISH MODES -- Abbreviations
@@ -479,8 +523,10 @@ character following the word. Meant to keep one space between words."
 ;; Don't include a comma in the expansion, even if it typically follows (e.g. fyi,
 ;; imho), except in case of salutations (e.g. wbr)
 ;; Remember, case is handled automatically :-)
+;; If it's not a prefix abbrev, there's little point in highlighting it.
 
 		    ; my constant. based on abbrev-file-name
+                    ; for now, prefix abbrevs only
 (defconst hi-lock-file-name
   (if (eq system-type 'vax-vms)
       "~/hilock.def"
@@ -506,7 +552,7 @@ character following the word. Meant to keep one space between words."
   (load hi-lock-file-name)
   (let ((the-list my-hilight-list))
     (while the-list
-      (highlight-regexp (car the-list) 'hi-bold)
+      (highlight-regexp (concat "\\(\\W\\|^\\)" (car the-list)) 'hi-bold)
       (setq the-list (cdr the-list)))))
 
 (defun starts-with (word prefix)
@@ -528,7 +574,7 @@ character following the word. Meant to keep one space between words."
 		    ; and add it to the list
     (if (starts-with (abbrev-expansion the-abbrev post-mode-abbrev-table) the-abbrev)
 	(progn
-	  (highlight-regexp the-abbrev 'hi-bold)
+	  (highlight-regexp (concat "\\(\\W\\|^\\)" the-abbrev) 'hi-bold) ; see other inlet!
 	  (setq my-hilight-list (cons the-abbrev my-hilight-list))))))
 
 (defun my-save-hilight-list ()
@@ -621,7 +667,7 @@ character following the word. Meant to keep one space between words."
 ;    In LISP-ISH MODES -- Minor modes
 ; ------------------------------------------------------------
 
-
+                    ; what if we use refill-mode? TO DO
 (add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
 (add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
 
@@ -807,9 +853,12 @@ then call eval-defun."
 ; -------------------------------------------
 
 
+; -------------------------------------------
 ;
-; DIRED
+;    DIRED-ISH MODES
 ;
+; -------------------------------------------
+
 
 ; I wanted Dired to recycle the current buffer rather than always to
 ; create new buffers - i.e. I needed an alternative to
@@ -837,7 +886,8 @@ then call eval-defun."
 	       'my-dired-find-alternate-file-updir)
 	     (define-key dired-mode-map "?"
 	       'my-dired-summary)
-	     (setq dired-listing-switches "-alFX")))
+             ;;	(setq dired-listing-switches "-alFX")
+             ))
 
 ; Should remind myself of diff btwn RETN and right arrow! Invoked with ?
 (defun my-dired-summary ()
@@ -846,7 +896,12 @@ then call eval-defun."
   (dired-why)
   ;>> this should check the key-bindings and use
   ;substitute-command-keys if non-standard
-  (message "> < skip non-dirs   find-dired   g_et  C-u s_witches   m_ark  u_nmark   * BANG unmark all\n+ mkdir  RIGHT go   i_nsert ls   ! shellcmd (no * or   * c_hange char   PCT m rgx on name\nRET go in new buf   M-$ fold     ? implies ? at end)   d_el   x_punge   PCT g content rgx"))
+  (message "\
+> < skip non-dirs   find-dired   g_et fresh listing    m_ark  u_nmark   * BANG unmark all
++ mkdir  RIGHT go   i_nsert ls   ! shellcmd (no * or   * c_hange char   PCT m rgx on name
+RET go in new buf   M-$ fold     ? implies ? at end)   d_el   x_punge   PCT g content rgx
+______________________________
+s_ort toggle by date / by name (C-u s for ls options)"))
 
 (add-hook 'dired-load-hook
 	  (lambda ()
@@ -866,9 +921,113 @@ then call eval-defun."
 ;;; for a better ls in dired, check out...
 ;;; ls-lisp.el --- emulate insert-directory completely in Emacs Lisp  
 
+
+;    In DIRED-ISH MODES -- Monk
+; ------------------------------------------------------------
+
+
+		;; The `autoload's for various commands
+		(autoload 'monk "monk" nil t)
+		(autoload 'monk-open-new "monk" nil t)
+		(autoload 'monk-other-window "monk" nil t)
+		(autoload 'monk-other-frame "monk" nil t)
+
+		;; If you need volume control
+		;; (setq monk-volume-command "aumix")
+
+		;; Mouse bindings some more (to HipHop on the mode-line)
+		(add-hook 'monk-load-hook 'monk-use-extra-mouse)
+
+		;; Enable M-m (monk-dired-do-monk), and
+		;;        M-C-m (monk-dired-do-monk-find-file) in dired
+		;; See also "Howto use monk-dired keyboard commands" section
+		;; in monk.el.
+		(autoload  'monk-dired-bind-extra-keys "monk" nil t)
+		(add-hook 'dired-load-hook 'monk-dired-bind-extra-keys)
+		;; dired *must* be loaded *after* this.
+
+                    ; the default is 'monk, but both suck - 3 marked files
+                    ; leads to three new monk buffers either way - huh?
+		;; I prefer this for M-m (monk-dired-do-monk) command in `dired'
+		(setq monk-dired-monk-command 'monk-other-window)
+
+		;; If you want to use remote cddb server to display track titles
+		;; when cdda2wav can't generate the track/album titles.
+		;; See monk-cddb script for detail.
+		;; (setq monk-use-cddb-server t)
+
+		;; To check CD media is in the drive (requires cdparanoia(1))
+		;; (setq monk-dont-care-no-CD nil)
+
+		;; In order to make the track timer work for MIDI track 
+		(setq monk-midi-probe-command "timidity")
+
+		;; If menu-bar entry is required from the start
+                (let ((fmenu (or (lookup-key global-map [menu-bar tools])
+                                 (lookup-key global-map [menu-bar file]))))
+                  (define-key-after fmenu [monk]
+                    ;; '("MonK" . monk) ;; This is the same setup in monk.el
+                    '("MonK" . monk-open-new) ;; monks may like this
+                    'calendar)
+                  (x-popup-menu nil fmenu))
+
+		;; Use `face' display for current playing track
+		(setq monk-use-face t)
+		;; Some examples of faces on emacs running as X client
+		;; (All of these may not available on your emacs):
+		;; 
+		;; ;; (setq monk-current-track-X-face-prop 'RoyalBlue)
+		;; (progn
+		;;   (load "cus-edit")
+		;; ;; (setq monk-current-track-X-face-prop 'custom-invalid-face)
+		;;  (setq monk-current-track-X-face-prop 'custom-set-face)
+		;;  )
+
+;; By wbhicks: I've found a few mp3s that mpg123 can't play but zinf can. This
+;; should work even without invoking zinf's rudimentary mpg123 emulation mode.
+;; (btw, that would be 'zinf -ui mpg123 somesong.mp3')
+;; If you're not running X, use 'zinf -ui zinfcmd somesong.mp3'
+;; id3tool to see/change metadata.
+;; mpg123eq3 and mpg123eq4 (better, since you can save) add an equalizer.
+;;
+;;    original in monk-mp3.el:
+;;    (defvar monk-mp3-player-command "mpg123" "Should be \"mpg123\".")
+;;
+;; WORKS, but not with multiple tracks.
+;; (setq monk-mp3-player-command "zinf")
+
+                    ; a simpler approach: give Monk a way to send multiple
+                    ; files to a shell command. Then use Monk's built-ins
+                    ; to invoke mpg123, or else call zinf from a shell
+                    ; (e.g. on the whole playlist).
+(defun my-monk-shell-command-multifile (command)
+  "Execute COMMAND on file property of the marked tracks, or else current track."
+  (interactive "sshell cmd for marked files, or else the one at point: ")
+  (let ((the-list ; nil iff (no marks or just ghost tracks)
+         (remove nil
+                 (mapcar '(lambda (x)
+                            (monk-assq-get-value 'file x))
+                         (monk-get-marked-track))))
+        (the-current (monk-assq-get-value 'file (monk-get-this-track))))
+    (cond
+     (the-list (shell-command (dired-shell-stuff-it command the-list nil)))
+     (the-current (shell-command (dired-shell-stuff-it command (list the-current) nil)))
+     (t (message "No file contained in this track")))))
+
+                    ; why is this -mode-, not -load-?
+(add-hook 'monk-mode-hook
+          '(lambda ()
+             (define-key monk-mode-map "!" 'my-monk-shell-command-multifile)))
+
+;;; hack - I changed monk-find-file in monk.el - diff the beginning w/the
+;;; orig in the ~/monk/monk-7 dir - pull into here!
+;; i.e. get my fingerprints off monk.el - rude
+
+; -------------------------------------------
 ;
-; END OF DIRED
+;    END OF DIRED-ISH MODES
 ;
+; -------------------------------------------
 
 		    ; stores in ~/.emacs.desktop (note the dot rather than underbar
 		    ; between the words). "Put these two lines in the bottom of your
