@@ -1,45 +1,45 @@
-; ------------------------------------------------------------
 ;
-;    SANITY-SAVING PRELIMINARIES
 ;
-; ------------------------------------------------------------
+;
+;
+;
 
-                    ; for Mutt
+                    ;
 (server-start)
-; later, set EDITOR to emacsclient -- but unneeded for Mutt
+;
 
-		    ; protect against trojans
+		    ;
 (setq enable-local-variables 'query)
 
-(setq visible-bell t) ; doesn't work
+(setq visible-bell t) ;
 
-		    ; n.b. There are other CL compatability files besides cl.elc; look at
-		    ; its cl-* siblings. But those don't "provide features" (with
-		    ; provide), so I'm not yet sure how to load them, unless I simply fall
-		    ; back on calls like (load "cl-extra"). 
+		    ;
+		    ;
+		    ;
+		    ;
 (require 'cl-19 "cl")
 
 (setq load-path (cons "~/.emacs_lisp" load-path))
 (require 'my-buff-menu)
 
-                    ; this, too, is in ~/.emacs_lisp
+                    ;
 (require 'wiki)
-                    ; I think this is the cause of a bug, since I am letting a nonexistent directory
-                    ; (~/Wiki/) be examined in the function wiki-existing-names.
-;; (setq wiki-directories (cons (expand-file-name "~/wiki_emacs/") wiki-directories))
-                    ; This is my solution:
+                    ;
+                    ;
+;
+                    ;
 (setq wiki-directories (cons (expand-file-name "~/wiki_emacs/") nil))
 
-                    ; I don't know why the default for wiki-directories specified a trailing slash
-                    ; and the default for wiki-pub-directory didn't. Oh well...
+                    ;
+                    ;
 (setq wiki-pub-directory (expand-file-name "~/wiki_emacs_html"))
 
-;; A useful time-saver when hacking this file: C-x C-e to send just the preceding sexp to emacs
+;
 
-;; C-] to abort-recursive-edit (e.g. you cause an error in Lisp Interaction mode and the
-;; mode line shows square brackets; C-] gets rid of them.) Cf. C-d in Inferior Lisp mode.
+;
+;
 
-;;    About Lisp comments
+;
 ;
 
 
