@@ -79,6 +79,8 @@
 ;
 (global-set-key [f8] 'bury-buffer)
 
+(load "~/post-mode/post")
+
 ;
 ;
 ;
@@ -127,8 +129,11 @@
 ;
 
 (hi-lock-mode 1)
-(highlight-regexp "(" 'hi-pink)
-(highlight-regexp ")" 'hi-pink)
+
+;
+(add-hook 'text-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
 
 ;
 ;
@@ -157,12 +162,18 @@
 
 ;
 
-(auto-fill-mode 1)
-(global-set-key "\M-s" 'fill-region)
+;
+(add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+;
+;
+(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
 
 ;
 ;
 ;
+
+(global-set-key "\M-s" 'fill-region)
 
 ;
 ;
@@ -173,8 +184,6 @@
 ;
 (autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
 (setq auto-mode-alist (cons '("\\.html$" . html-helper-mode)       auto-mode-alist))
-
-(load "~/post-mode/post")
 
 (setq default-major-mode 'text-mode)
 
