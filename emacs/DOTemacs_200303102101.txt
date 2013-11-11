@@ -79,6 +79,8 @@
 ; let F8 cycle buffers (normally there's no key binding for this!)
 (global-set-key [f8] 'bury-buffer)
 
+(load "~/post-mode/post")
+
 ;
 ; FONT-LOCK
 ;
@@ -127,8 +129,11 @@
 ;
 
 (hi-lock-mode 1)
-(highlight-regexp "(" 'hi-pink)
-(highlight-regexp ")" 'hi-pink)
+
+;            as nearly global as I can make it:
+(add-hook 'text-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
 
 ; hi-lock-mode is like font-lock but interactive. similar
 ; to the way isearch highlights each instance of the search
@@ -157,12 +162,18 @@
 
 ; Now they flash. Next topic...
 
-(auto-fill-mode 1)
-(global-set-key "\M-s" 'fill-region)
+;            as nearly global as I can make it:
+(add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+;            Turn on Auto Fill mode automatically 
+;            in Text mode and related modes:
+(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
 
 ; auto-fill doesn't handle pre-filled text - it breaks but
 ; doesn't combine. For that I need manual fill, for which
 ; this key-rebinding is handy (M-s is typically center-line).
+
+(global-set-key "\M-s" 'fill-region)
 
 ;
 ; END OF GLOBAL MINOR MODES
@@ -173,8 +184,6 @@
 ;
 (autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
 (setq auto-mode-alist (cons '("\\.html$" . html-helper-mode)       auto-mode-alist))
-
-(load "~/post-mode/post")
 
 (setq default-major-mode 'text-mode)
 
