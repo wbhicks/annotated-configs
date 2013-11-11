@@ -4,8 +4,14 @@
 ;
 ;
 
+                    ;
+(server-start)
+;
+
 		    ;
 (setq enable-local-variables 'query)
+
+(setq visible-bell t) ;
 
 		    ;
 		    ;
@@ -16,11 +22,22 @@
 (setq load-path (cons "~/.emacs_lisp" load-path))
 (require 'my-buff-menu)
 
+                    ;
+(require 'wiki)
+                    ;
+                    ;
+;
+                    ;
+(setq wiki-directories (cons (expand-file-name "~/wiki_emacs/") nil))
+
+                    ;
+                    ;
+(setq wiki-pub-directory (expand-file-name "~/wiki_emacs_html"))
+
 ;
 
 ;
 ;
-
 
 ;
 ;
@@ -223,7 +240,7 @@
 (custom-set-faces
   ;
   ;
- '(default ((t (:stipple nil :background "unspecified-bg" :foreground "cyan" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :family "default"))))
+ '(default ((t (:stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1 :width normal :family "default"))))
  '(Info-title-1-face ((((type tty pc) (class color)) (:foreground "yellow"))))
  '(Info-title-2-face ((((type tty pc) (class color)) (:foreground "blue"))))
  '(cursor ((t (:foreground "blue"))))
@@ -271,22 +288,29 @@
 ;
 
 
-;
 		    ;
 		    ;
+                    ;
 		    ;
 		    ;
 		    ;
 		    ;
 		    ;
                     ;
-(if (equal (getenv "DISP_COLOR_PREF") "console")
-    (setq next-screen-context-lines 12)
-  (setq next-screen-context-lines 21))
+                    ;
+                    ;
+(setq next-screen-context-lines 28)
+
+;
+;
+;
+;
+;
+;
 
                     ;
 (menu-bar-mode 0)
-
+    
 		    ;
 (setq column-number-mode t)
 
@@ -347,7 +371,11 @@
 (setq key-translation-map (or key-translation-map (make-keymap)))
 (define-key key-translation-map "\C-x?" "\C-h")
 (define-key key-translation-map "\C-h" (kbd "DEL"))
- 
+
+                    ;
+                    ;
+(global-set-key "\e[3~" 'delete-char)
+
 ;
 ;
 ;
@@ -379,6 +407,12 @@ character following the word. Meant to keep one space between words."
 			(point)))))
 
 (global-set-key "\M-d" 'my-kill-word)
+
+                    ;
+                    ;
+                    ;
+(global-set-key [insert] 'auto-fill-mode)
+ 
 
 
 ;
@@ -428,8 +462,12 @@ character following the word. Meant to keep one space between words."
 ;
 ;
 
+                    ;
+                    ;
+;
+
 		    ;
-(setq-default fill-column 90)
+(setq-default fill-column 140) ;
 		    ;
 		    ;
  
@@ -445,6 +483,12 @@ character following the word. Meant to keep one space between words."
 	  '(lambda ()
 	     (define-key text-mode-map "\M-s"
 	       'fill-region)))
+
+;
+(add-hook 'text-mode-hook
+          '(lambda ()
+             (define-key text-mode-map "\d" 
+               'delete-backward-char)))
 
 
 ;
@@ -479,8 +523,10 @@ character following the word. Meant to keep one space between words."
 ;
 ;
 ;
+;
 
 		    ;
+                    ;
 (defconst hi-lock-file-name
   (if (eq system-type 'vax-vms)
       "~/hilock.def"
@@ -506,7 +552,7 @@ character following the word. Meant to keep one space between words."
   (load hi-lock-file-name)
   (let ((the-list my-hilight-list))
     (while the-list
-      (highlight-regexp (car the-list) 'hi-bold)
+      (highlight-regexp (concat "\\(\\W\\|^\\)" (car the-list)) 'hi-bold)
       (setq the-list (cdr the-list)))))
 
 (defun starts-with (word prefix)
@@ -528,7 +574,7 @@ character following the word. Meant to keep one space between words."
 		    ;
     (if (starts-with (abbrev-expansion the-abbrev post-mode-abbrev-table) the-abbrev)
 	(progn
-	  (highlight-regexp the-abbrev 'hi-bold)
+	  (highlight-regexp (concat "\\(\\W\\|^\\)" the-abbrev) 'hi-bold) ;
 	  (setq my-hilight-list (cons the-abbrev my-hilight-list))))))
 
 (defun my-save-hilight-list ()
@@ -621,7 +667,7 @@ character following the word. Meant to keep one space between words."
 ;
 ;
 
-
+                    ;
 (add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
 (add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
 
@@ -810,6 +856,9 @@ then call eval-defun."
 ;
 ;
 ;
+;
+;
+
 
 ;
 ;
@@ -837,7 +886,8 @@ then call eval-defun."
 	       'my-dired-find-alternate-file-updir)
 	     (define-key dired-mode-map "?"
 	       'my-dired-summary)
-	     (setq dired-listing-switches "-alFX")))
+             ;
+             ))
 
 ;
 (defun my-dired-summary ()
@@ -846,7 +896,12 @@ then call eval-defun."
   (dired-why)
   ;
   ;
-  (message "> < skip non-dirs   find-dired   g_et  C-u s_witches   m_ark  u_nmark   * BANG unmark all\n+ mkdir  RIGHT go   i_nsert ls   ! shellcmd (no * or   * c_hange char   PCT m rgx on name\nRET go in new buf   M-$ fold     ? implies ? at end)   d_el   x_punge   PCT g content rgx"))
+  (message "\
+> < skip non-dirs   find-dired   g_et fresh listing    m_ark  u_nmark   * BANG unmark all
++ mkdir  RIGHT go   i_nsert ls   ! shellcmd (no * or   * c_hange char   PCT m rgx on name
+RET go in new buf   M-$ fold     ? implies ? at end)   d_el   x_punge   PCT g content rgx
+______________________________
+s_ort toggle by date / by name (C-u s for ls options)"))
 
 (add-hook 'dired-load-hook
 	  (lambda ()
@@ -866,6 +921,110 @@ then call eval-defun."
 ;
 ;
 
+
+;
+;
+
+
+		;
+		(autoload 'monk "monk" nil t)
+		(autoload 'monk-open-new "monk" nil t)
+		(autoload 'monk-other-window "monk" nil t)
+		(autoload 'monk-other-frame "monk" nil t)
+
+		;
+		;
+
+		;
+		(add-hook 'monk-load-hook 'monk-use-extra-mouse)
+
+		;
+		;
+		;
+		;
+		(autoload  'monk-dired-bind-extra-keys "monk" nil t)
+		(add-hook 'dired-load-hook 'monk-dired-bind-extra-keys)
+		;
+
+                    ;
+                    ;
+		;
+		(setq monk-dired-monk-command 'monk-other-window)
+
+		;
+		;
+		;
+		;
+
+		;
+		;
+
+		;
+		(setq monk-midi-probe-command "timidity")
+
+		;
+                (let ((fmenu (or (lookup-key global-map [menu-bar tools])
+                                 (lookup-key global-map [menu-bar file]))))
+                  (define-key-after fmenu [monk]
+                    ;
+                    '("MonK" . monk-open-new) ;
+                    'calendar)
+                  (x-popup-menu nil fmenu))
+
+		;
+		(setq monk-use-face t)
+		;
+		;
+		;
+		;
+		;
+		;
+		;
+		;
+		;
+
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+
+                    ;
+                    ;
+                    ;
+                    ;
+(defun my-monk-shell-command-multifile (command)
+  "Execute COMMAND on file property of the marked tracks, or else current track."
+  (interactive "sshell cmd for marked files, or else the one at point: ")
+  (let ((the-list ;
+         (remove nil
+                 (mapcar '(lambda (x)
+                            (monk-assq-get-value 'file x))
+                         (monk-get-marked-track))))
+        (the-current (monk-assq-get-value 'file (monk-get-this-track))))
+    (cond
+     (the-list (shell-command (dired-shell-stuff-it command the-list nil)))
+     (the-current (shell-command (dired-shell-stuff-it command (list the-current) nil)))
+     (t (message "No file contained in this track")))))
+
+                    ;
+(add-hook 'monk-mode-hook
+          '(lambda ()
+             (define-key monk-mode-map "!" 'my-monk-shell-command-multifile)))
+
+;
+;
+;
+
+;
+;
 ;
 ;
 ;
