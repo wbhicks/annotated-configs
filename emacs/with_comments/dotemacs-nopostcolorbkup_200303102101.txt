@@ -1,0 +1,234 @@
+; when emacs lacks its own X window, <backspace> triggers Help.
+; (n.b.: F1 invokes Help anyway, so you don't need to remember
+; the bit about C-x ? below. )
+; this makes the <backspace> key work properly:
+ 
+(setq key-translation-map (or key-translation-map (make-keymap)))
+(define-key key-translation-map "\C-x?" "\C-h")
+(define-key key-translation-map "\C-h" (kbd "DEL"))
+ 
+;
+;This tells C-h to behave like DEL does normally, and it tells C-x ? to
+;behave like C-h does normally.  That is, instead of C-h k to find out
+;the meaning of a key, you now type C-x ? k.  And C-h works as you
+;want, even in isearch.
+;
+;However, beware: I haven't really tested this, just tried it for maybe
+;30 seconds.  I will add this to my own init file, though, so when the
+;need arises to use Emacs in non-X mode, I will see what happens.
+;
+;But please note the following: if you're using Emacs under X, all of
+;this is not necessary: Backspace already deletes to the left and C-h
+;gives you help.
+;
+;-- Kai Grossjohann, Informatik VI        grossjohann@ls6.cs.uni-dortmund.de
+ 
+;
+; why ctrl-RIGHT doesn't work under -nw option (for now):
+;
+;> 2) control-up arrow (down arrow) do not recall
+;> previous commands
+;> 3) control left/right arrows do not go to the
+;> next/previous words
+;
+;This is not so easy to do, since the terminal probably doesn't know
+;about these keys.  That is, when you hit C-<left>, the terminal sends
+;<left> to the application.  Since the application never learns that
+;the ctrl key was pressed, it cannot react.
+;
+;But if your terminal is programmable, you can do that.  The first
+;thing to do is to find out the escape sequence for <left> and program
+;the terminal to emit a *different* escape sequence for C-<left>.
+ 
+; these work but they screw up the page-up and page-down keys:
+;
+;(global-set-key "\M-]" 'forward-word)
+;(global-set-key "\M-[" 'backward-word)
+
+; in desperation I made the left and right arrow keys _always_
+; jump words:
+; 
+(global-set-key [right] 'forward-word)
+(global-set-key [left] 'backward-word)
+
+; now let's see if C-left and C-right (or M-...) are visible -- if so,
+; they can move by character and we won't need to use
+; C-b and C-f... (much trial-and-error) ... nope, they're
+; not visible.
+
+; Nov 17 2001 - gotta get my char-by-char jump back...
+(global-set-key "{" "[")
+(global-set-key "}" "]")
+(global-set-key "]" 'forward-char)
+(global-set-key "[" 'backward-char)
+
+; Normally, both C-_ and C-/ mean "undo".
+; I'm not making any changes here, but I'm writing this note because I'm
+; about to make C-_ the escape (command) sequence for SCREEN -- i.e. the
+; GNU app called _screen_. Since I'm using emacs under screen, I expect
+; that emacs can no longer count on getting the C-_ signal; therefore,
+; plan on working with C-/ when necessary.
+; wbhicks July 1 2001
+;
+; PROBLEM: C-/ _also_ gets trapped by SCREEN. Hmmm...
+;
+; OK, now I've gotten screen to use C-\
+
+; I am using F5, F6 and F7 for SCREEN -- i.e. the GNU app called _screen_.
+; I'd like similar access to buffers in emacs...
+; let F8 cycle buffers (normally there's no key binding for this!)
+(global-set-key [f8] 'bury-buffer)
+
+(load "~/post-mode/post")
+
+;
+; FONT-LOCK
+;
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(global-font-lock-mode t nil (font-lock)))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom -- don't edit or cut/paste it!
+  ;; Your init file should contain only one such instance.
+ '(Info-title-1-face ((((type tty pc) (class color)) (:foreground "yellow"))))
+ '(Info-title-2-face ((((type tty pc) (class color)) (:foreground "blue"))))
+ '(custom-documentation-face ((t (:inverse-video nil))))
+ '(custom-group-tag-face ((t (:foreground "blue" :weight bold :height 1.2))))
+ '(custom-variable-tag-face ((t (:inherit variable-pitch :foreground "red1" :weight bold :height 1.2))))
+ '(font-lock-builtin-face ((((type tty) (class color)) (:foreground "blue" :underline t))))
+ '(font-lock-comment-face ((((type tty pc) (class color) (background dark)) (:foreground "red"))))
+ '(font-lock-constant-face ((((type tty) (class color)) (:foreground "magenta"))))
+ '(font-lock-keyword-face ((t (:foreground "blue"))))
+ '(font-lock-string-face ((((type tty) (class color)) (:foreground "red"))))
+ '(font-lock-type-face ((((type tty) (class color)) (:underline t))))
+ '(font-lock-variable-name-face ((((type tty) (class color)) (:foreground "blue" :underline t :weight bold))))
+ '(font-lock-warning-face ((((type tty) (class color)) (:background "black" :foreground "red"))))
+ '(hi-pink ((((background dark)) (:foreground "white"))))
+ '(info-node ((t (:foreground "black"))))
+ '(info-xref ((t (:foreground "red" :weight bold))))
+ '(post-double-quoted-text-face ((t (:inherit post-quoted-text-face :weight bold))))
+ '(post-header-keyword-face ((t (:foreground "red" :weight bold))))
+ '(post-multiply-quoted-text-face ((t (:foreground "cyan"))))
+ '(post-quoted-text-face ((t (:foreground "blue"))))
+ '(show-paren-match-face ((((class color)) (:foreground "red" :weight bold))))
+ '(show-paren-mismatch-face ((((class color)) (:background "white" :foreground "magenta" :underline t :weight bold))))
+ '(vhdl-font-lock-attribute-face ((((class color) (background dark)) (:background "black" :foreground "white"))))
+ '(vhdl-font-lock-directive-face ((((class color) (background dark)) (:background "black" :foreground "Aquamarine"))))
+ '(vhdl-font-lock-enumvalue-face ((((class color) (background dark)) (:background "black" :foreground "BurlyWood"))))
+ '(vhdl-font-lock-function-face ((((class color) (background dark)) (:background "black" :foreground "Orchid1")))))
+
+
+;
+; END OF FONT-LOCK
+;
+
+;
+; GLOBAL MINOR MODES
+;
+
+(hi-lock-mode 1)
+
+;            as nearly global as I can make it:
+(add-hook 'text-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+
+; hi-lock-mode is like font-lock but interactive. similar
+; to the way isearch highlights each instance of the search
+; term (assuming font-lock is on, which in my case it always 
+; is), except that with hi-lock-mode the highlights stay 
+; until you turn them off, plus you can select colors etc.
+; 
+; hi-lock-mode is ALSO the way I color parens - I failed to
+; get font-lock to color parens, after much effort.
+;
+; At first I applied paren-coloring only in lisp-mode, but
+; later decided to apply it globally.
+;
+; I want a nearly-invisible face for the parens. Since the face
+; hi-pink comes builtin with hi-lock-mode but is ugly as-is,
+; I used M-x customize to change it into a ghostly grey (see 
+; the custom-set-faces entry elsewhere in this .emacs file).
+; Now it will take effect without requiring an explicit C-x w h...
+;
+; Now, thanks to hi-lock-mode, the parens are nearly invisible. 
+; But that means I need to flash them when point is over one - 
+; fortunately, show-paren-mode is intended for this...
+
+(require 'paren)
+(show-paren-mode 1)
+
+; Now they flash. Next topic...
+
+;            as nearly global as I can make it:
+(add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (auto-fill-mode 1)))
+;            Turn on Auto Fill mode automatically 
+;            in Text mode and related modes:
+(add-hook 'text-mode-hook '(lambda () (auto-fill-mode 1)))
+
+; auto-fill doesn't handle pre-filled text - it breaks but
+; doesn't combine. For that I need manual fill, for which
+; this key-rebinding is handy (M-s is typically center-line).
+
+(global-set-key "\M-s" 'fill-region)
+
+;
+; END OF GLOBAL MINOR MODES
+;
+
+;
+; see http://www.emacswiki.org/cgi-bin/wiki.pl?HtmlHelperMode
+;
+(autoload 'html-helper-mode "html-helper-mode" "Yay HTML" t)
+(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode)       auto-mode-alist))
+
+(setq default-major-mode 'text-mode)
+
+(setq abbrev-file-name "~/.emacs_abbrevs")
+(quietly-read-abbrev-file)
+(add-hook 'text-mode-hook '(lambda () (abbrev-mode 1)))
+
+;
+; FOR WRITING LISP CODE
+;
+
+(setq inferior-lisp-program "clisp")
+; so clisp can occupy a tall narrow window...
+(setq truncate-partial-width-windows nil)
+
+; Fundamental and Text Modes don't support Hideshow Minor Mode
+; So despite its utility it can't be a global minor mode
+
+(add-hook 'lisp-mode-hook '(lambda () (hs-minor-mode 1)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (hs-minor-mode 1)))
+
+; Additionally, Joseph Eydelnant writes:
+(defvar my-hs-hide nil "Current state of hideshow for toggling all.")
+;;;###autoload
+(defun my-toggle-hideshow-all () "Toggle hideshow all."
+  (interactive)
+  (setq my-hs-hide (not my-hs-hide))
+  (if my-hs-hide 
+      (hs-hide-all)
+    (hs-show-all)))
+
+; "These keys are reserved for users: C-c followed by a letter."
+; So I'll use a couple of them to make hs-minor-mode easier:
+
+(global-set-key "\C-cc" 'hs-toggle-hiding)
+;   BTW, hs-toggle-hiding is C-c @ C-c by default
+(global-set-key "\C-cC" 'my-toggle-hideshow-all)
+
+;
+; END OF FOR WRITING LISP CODE
+;
+
+
+
+
+
+
+
