@@ -105,6 +105,7 @@
  '(font-lock-type-face ((((type tty) (class color)) (:underline t))))
  '(font-lock-variable-name-face ((((type tty) (class color)) (:foreground "blue" :underline t :weight bold))))
  '(font-lock-warning-face ((((type tty) (class color)) (:background "black" :foreground "red"))))
+ '(hi-blue ((((background dark)) (:background "white" :foreground "blue" :underline t))))
  '(hi-pink ((((background dark)) (:foreground "white"))))
  '(info-node ((t (:foreground "black"))))
  '(info-xref ((t (:foreground "red" :weight bold))))
@@ -131,10 +132,6 @@
 (hi-lock-mode 1)
 
 ;
-(add-hook 'text-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-
 ;
 ;
 ;
@@ -142,24 +139,6 @@
 ;
 ;
 ;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-;
-
-(require 'paren)
-(show-paren-mode 1)
-
 ;
 
 ;
@@ -198,6 +177,34 @@
 (setq inferior-lisp-program "clisp")
 ;
 (setq truncate-partial-width-windows nil)
+
+(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+
+(require 'paren)
+(show-paren-mode 1)
+
+;
 
 ;
 ;
