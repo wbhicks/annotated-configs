@@ -105,6 +105,7 @@
  '(font-lock-type-face ((((type tty) (class color)) (:underline t))))
  '(font-lock-variable-name-face ((((type tty) (class color)) (:foreground "blue" :underline t :weight bold))))
  '(font-lock-warning-face ((((type tty) (class color)) (:background "black" :foreground "red"))))
+ '(hi-blue ((((background dark)) (:background "white" :foreground "blue" :underline t))))
  '(hi-pink ((((background dark)) (:foreground "white"))))
  '(info-node ((t (:foreground "black"))))
  '(info-xref ((t (:foreground "red" :weight bold))))
@@ -130,37 +131,15 @@
 
 (hi-lock-mode 1)
 
-;            as nearly global as I can make it:
-(add-hook 'text-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
-
 ; hi-lock-mode is like font-lock but interactive. similar
 ; to the way isearch highlights each instance of the search
 ; term (assuming font-lock is on, which in my case it always 
 ; is), except that with hi-lock-mode the highlights stay 
 ; until you turn them off, plus you can select colors etc.
 ; 
+; BTW, for lispish-modes only:
 ; hi-lock-mode is ALSO the way I color parens - I failed to
 ; get font-lock to color parens, after much effort.
-;
-; At first I applied paren-coloring only in lisp-mode, but
-; later decided to apply it globally.
-;
-; I want a nearly-invisible face for the parens. Since the face
-; hi-pink comes builtin with hi-lock-mode but is ugly as-is,
-; I used M-x customize to change it into a ghostly grey (see 
-; the custom-set-faces entry elsewhere in this .emacs file).
-; Now it will take effect without requiring an explicit C-x w h...
-;
-; Now, thanks to hi-lock-mode, the parens are nearly invisible. 
-; But that means I need to flash them when point is over one - 
-; fortunately, show-paren-mode is intended for this...
-
-(require 'paren)
-(show-paren-mode 1)
-
-; Now they flash. Next topic...
 
 ;            as nearly global as I can make it:
 (add-hook 'lisp-mode-hook '(lambda () (auto-fill-mode 1)))
@@ -198,6 +177,34 @@
 (setq inferior-lisp-program "clisp")
 ; so clisp can occupy a tall narrow window...
 (setq truncate-partial-width-windows nil)
+
+(add-hook 'lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+(add-hook 'emacs-lisp-mode-hook '(lambda () (highlight-regexp "[)(]" 'hi-pink)))
+
+; for lispish-modes only:
+; hi-lock-mode is ALSO the way I color parens - I failed to
+; get font-lock to color parens, after much effort.
+;
+; I tried to apply paren-coloring globally, but there were two
+; problems: highlight-regexp must be called from the hooks of 
+; each major mode in order to take effect, and when called from
+; text-mode-hook it knocked out the faces in post-mode. I'd
+; rather have colored quote levels in post-mode than nice parens!
+;
+; I want a nearly-invisible face for the parens. Since the face
+; hi-pink comes builtin with hi-lock-mode but is ugly as-is,
+; I used M-x customize to change it into a ghostly grey (see 
+; the custom-set-faces entry elsewhere in this .emacs file).
+; Now it will take effect without requiring an explicit C-x w h...
+;
+; Now, thanks to hi-lock-mode, the parens are nearly invisible. 
+; But that means I need to flash them when point is over one - 
+; fortunately, show-paren-mode is intended for this...
+
+(require 'paren)
+(show-paren-mode 1)
+
+; Now they flash (global effect, BTW). Next topic...
 
 ; Fundamental and Text Modes don't support Hideshow Minor Mode
 ; So despite its utility it can't be a global minor mode
