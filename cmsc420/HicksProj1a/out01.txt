@@ -1,0 +1,49 @@
+
+*****
+==> CREATE_DOT(a, 4, 8, 2, RED)
+Created dot a at (4,8) color:RED.
+
+*****
+==> CREATE_DOT(b, 6, 8, 2, GREEN)
+Created dot b at (6,8) color:GREEN.
+
+*****
+==> CREATE_DOT(c, 8, 8, 2, BLUE)
+Created dot c at (8,8) color:BLUE.
+
+*****
+==> CREATE_DOT(d, 10, 8, 2, BLACK)
+Created dot d at (10,8) color:BLACK.
+
+*****
+==> CREATE_DOT(e, 12, 8, 2, WHITE)
+Created dot e at (12,8) color:WHITE.
+
+*****
+==> LIST_DOTS()
+a at (4,8) color:RED
+b at (6,8) color:GREEN
+c at (8,8) color:BLUE
+d at (10,8) color:BLACK
+e at (12,8) color:WHITE
+
+*****
+==> CREATE_PATH(a, b)
+Created path (a,b).
+
+*****
+==> CREATE_PATH(b, c)
+Created path (b,c).
+
+*****
+==> CREATE_PATH(c, d)
+Created path (c,d).
+
+*****
+==> CREATE_PATH(d, e)
+Created path (d,e).
+
+*****
+==> SHORTEST_PATH(a, e)
+a -> b -> c -> d -> e
+Total length:8.000.
