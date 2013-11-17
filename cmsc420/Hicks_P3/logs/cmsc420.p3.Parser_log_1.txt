@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2004-09-10T17:52:42</date>
+  <millis>1094827962635</millis>
+  <sequence>4</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>topLevel</method>
+  <thread>10</thread>
+  <message>Leaving main. Running time (ms): 2376</message>
+</record>
+</log>

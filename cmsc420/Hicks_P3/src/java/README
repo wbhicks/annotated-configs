@@ -1,0 +1,13 @@
+mhs20022
+wbhicks@umd.edu
+cmsc420 project 3e
+NOT FOR FINAL SUBMISSION - THIS IS A UNIT-TESTING VERSION - PLEASE DISREGARD
+This version is NOT intended to adhere to the PM1QT specs and submission requirements 
+- in followup to my email to Dr. Hugue, this version uses both a PM1QT and a couple 
+of TreeMaps to allow me to unit-test the correctness of the QT. So, please disregard 
+this submission, if you are not Dr. Hugue and therefore didn't read my email 
+requesting permission for this "dummy" submission. 
+
+source code derivations:
+In Parser.java, two methods (isWS and topLevel) by Evan Machusak (changes by wbhicks).
+In Parser.java, changeStdIn implements David Anderson's posted idea.

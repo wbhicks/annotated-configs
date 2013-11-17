@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968273</millis>
+  <sequence>1</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@e2cb55</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968300</millis>
+  <sequence>2</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968306</millis>
+  <sequence>4</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Couldn't redirect!</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968350</millis>
+  <sequence>6</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@9360e2</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968351</millis>
+  <sequence>7</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968372</millis>
+  <sequence>8</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@c05d3b</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968374</millis>
+  <sequence>9</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968377</millis>
+  <sequence>10</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@28f6ee</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968384</millis>
+  <sequence>11</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968389</millis>
+  <sequence>14</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@6bade9</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:28</date>
+  <millis>1094495968391</millis>
+  <sequence>15</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:29</date>
+  <millis>1094495969355</millis>
+  <sequence>18</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@5ad5c6</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:29</date>
+  <millis>1094495969357</millis>
+  <sequence>19</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:29</date>
+  <millis>1094495969360</millis>
+  <sequence>20</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdOut</method>
+  <thread>10</thread>
+  <message>java.io.PrintStream@88e2dd</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:29</date>
+  <millis>1094495969368</millis>
+  <sequence>21</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdOut</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:38</date>
+  <millis>1094495978789</millis>
+  <sequence>22</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>topLevel</method>
+  <thread>10</thread>
+  <message>Leaving main. Running time (ms): 9419</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:38</date>
+  <millis>1094495978791</millis>
+  <sequence>23</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>java.io.FileInputStream@e70e30</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:38</date>
+  <millis>1094495978797</millis>
+  <sequence>24</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdIn</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:38</date>
+  <millis>1094495978799</millis>
+  <sequence>25</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdOut</method>
+  <thread>10</thread>
+  <message>java.io.PrintStream@54864a</message>
+</record>
+<record>
+  <date>2004-09-06T21:39:38</date>
+  <millis>1094495978801</millis>
+  <sequence>26</sequence>
+  <logger>cmsc420.p3.Parser</logger>
+  <level>FINE</level>
+  <class>cmsc420.p3.Parser</class>
+  <method>changeStdOut</method>
+  <thread>10</thread>
+  <message>Redirected.</message>
+</record>
+</log>

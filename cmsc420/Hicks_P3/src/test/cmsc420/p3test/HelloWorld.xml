@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Hello World" default="Hello" basedir=".">
+<!-- It is not possible to run multiple targets from the Ant view. -->
+	<property name="HelloText" value="Hello" />
+	<property name="WorldText" value="Whirled" />
+
+	<target name="Hello">
+
+		<echo>${HelloText}</echo>
+
+	</target>
+	
+	<target name="World">
+
+		<echo>${WorldText}</echo>
+
+	</target>
+	
+	
+
+</project>

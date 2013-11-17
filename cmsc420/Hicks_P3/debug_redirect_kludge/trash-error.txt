@@ -1,0 +1,27 @@
+*****
+==> CREATE_DOT(A,256,768,1,RED)
+Created dot A at (256,768) color:RED.
+*****
+==> CREATE_DOT(B,768,768,1,RED)
+Created dot B at (768,768) color:RED.
+*****
+==> CREATE_DOT(C,768,256,1,RED)
+Created dot C at (768,256) color:RED.
+*****
+==> INIT_QUADTREE(10)
+Quadtree initialized.
+*****
+==> MAP_SEGMENT(A,B)
+Mapped segment (A,B).
+*****
+==> MAP_SEGMENT(B,C)
+Error: Intersection detected.[2small2split: lx=767ly=768ux=768uy=769][relayed by mapSeg(cmsc420.p3.DotName@6d2633,cmsc420.p3.DotName@e70e30)]
+*****
+==> MAP_SEGMENT(C,A)
+Error: Intersection detected.[2small2split: lx=255ly=768ux=256uy=769][relayed by mapSeg(cmsc420.p3.DotName@54864a,cmsc420.p3.DotName@3c9217)]
+*****
+==> PRINT_QUADTREE()
+[_ qt viz would go here _]
+*****
+==> EXIT()
+Have a nice day!

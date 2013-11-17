@@ -1,0 +1,16 @@
+Nov 28, 2004 11:52:01 PM cmsc420.p3test.ParserTest changeStdIn
+FINE: java.io.FileInputStream@19b1de
+Nov 28, 2004 11:52:01 PM cmsc420.p3test.ParserTest changeStdIn
+FINE: Redirected.
+Nov 28, 2004 11:52:01 PM cmsc420.p3test.ParserTest changeStdOut
+FINE: java.io.PrintStream@8941f7
+Nov 28, 2004 11:52:01 PM cmsc420.p3test.ParserTest changeStdOut
+FINE: Redirected.
+Nov 28, 2004 11:52:13 PM cmsc420.p3test.ParserTest changeStdIn
+FINE: java.io.FileInputStream@914f6a
+Nov 28, 2004 11:52:13 PM cmsc420.p3test.ParserTest changeStdIn
+FINE: Redirected.
+Nov 28, 2004 11:52:13 PM cmsc420.p3test.ParserTest changeStdOut
+FINE: java.io.PrintStream@f4cbee
+Nov 28, 2004 11:52:13 PM cmsc420.p3test.ParserTest changeStdOut
+FINE: Redirected.

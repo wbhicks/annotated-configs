@@ -1,0 +1,48 @@
+
+*****
+==> CREATE_DOT(A,256,768,1,RED)
+Created dot A at (256,768) color:RED.
+
+*****
+==> CREATE_DOT(B,768,768,1,RED)
+Created dot B at (768,768) color:RED.
+
+*****
+==> CREATE_DOT(C,768,256,1,RED)
+Created dot C at (768,256) color:RED.
+
+*****
+==> INIT_QUADTREE(10)
+Quadtree initialized.
+
+*****
+==> MAP_SEGMENT(A,B)
+Mapped segment (A,B).
+
+*****
+==> MAP_SEGMENT(B,C)
+Mapped segment (B,C).
+
+*****
+==> MAP_SEGMENT(C,A)
+Mapped segment (C,A).
+
+*****
+==> PRINT_QUADTREE()
+
+NW A at (256, 768) color: RED: (A,C)(A,B)
+NE
+NW B at (768, 768) color: RED:(A,B)(C,B)
+NE B at (768, 768) color: RED:(A,B)(C,B)
+SW
+NW (A,B)
+NE B at (768, 768) color: RED:(A,B)(C,B)
+SW (A,C)
+SE (C,B)
+SE B at (768, 768) color: RED:(A,B)(C,B)
+SW (A,C)
+SE C at (768, 256) color: RED:(A,C)(C,B)
+
+*****
+==> EXIT()
+Have a nice day!
